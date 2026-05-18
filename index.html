@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 450px;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            margin: 0 auto 1.5rem;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.75rem;
+        }
+
+        .job-title {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .bio {
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .sns-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .sns-link {
+            text-decoration: none;
+            color: white;
+            background: var(--primary-color);
+            padding: 0.8rem;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .sns-link:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .sns-link.instagram { background: #ffb055; }
+        .sns-link.greeen { background: #00ff37; }
+        .sns-link.cinoclient { background: #ffff00; }
+        .sns-link.lameclient { background: #bf40ff; }
+
+        footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-card">
+        <img src="prflcn.jpg" alt="プロフィール写真" class="avatar">
+        <h1>なゆ</h1>
+        <span class="job-title">エンジニア / デザイナー</span>
+        
+        <div class="bio">
+            観光や旅をしたり、ツールやサイトを作ってるものです。<br>
+            MBTI: INFJ-A<br>
+            変人
+        </div>
+
+        <div class="sns-links">
+            SNS Account
+            <a href="https://www.instagram.com/Nayu_hime/" class="sns-link instagram">Instagram</a>
+
+            ツール
+            <a href="https://yj-requin.github.io/ImageConverter/" class="sns-link greeen">pngConverter</a>
+
+            クライアント
+            <a href="https://sphereshark.github.io/CinoClient/" class="sns-link cinoclient">CinoClient</a>
+            <a href="https://sphereshark.github.io/CinoClient/" class="sns-link lameclient">LameClient</a>
+
+        </div>
+        
+        <div class="bio">
+            <h4>好きなアニメ: </h4>魔王学院の不適合者、食戟のソーマ、コードギアス、赤髪の白雪姫、俺レベ、即死チート、シャーロット、ヒロアカ、ごちうさ<br>
+            <h4>好きなラノベ: </h4>魔王学院の不適合者、ロクアカ<br>
+            <h4>好きなキャラ: </h4>アノス・ヴォルディゴード、ミーシャネクロン、初音ミク、<br>
+            <h4>好きなゲーム: </h4>Minecraft、スマブラ、テトリス、ペルソナ5、ファンタジーライフ、アルティメットチキンホース<br>
+            <h4>好きなカラー: </h4>白色、水色、オレンジ色
+        </div>
+
+        <h6>読んでくれてありがとう！</h6>
+        <footer>© 2026 なゆ</footer>
+    </div>
+</body>
+</html>
