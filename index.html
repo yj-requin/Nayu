@@ -7,21 +7,103 @@
     <style>
         :root {
             --primary-color: #2563eb;
+            --accent-color: #3b82f6;
             --bg-color: #f8fafc;
             --text-color: #1e293b;
             --card-bg: #ffffff;
             --sub-text: #64748b;
             --sparkle-color: rgba(255, 255, 255, 0.8);
+            --pattern-color: var(--primary-color);
+            --glow-opacity: 0;
+            --bg-speed: 120s;
+            --nav-bg-rgb: 255, 255, 255;
+            --nav-opacity: 0;
+            --nav-border: rgba(0, 0, 0, 0.05);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #0f172a;
-                --text-color: #f1f5f9;
-                --card-bg: #1e293b;
-                --sub-text: #94a3b8;
-                --sparkle-color: rgba(255, 255, 255, 0.5);
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --text-color: #f1f5f9;
+            --card-bg: #1e293b;
+            --sub-text: #94a3b8;
+            --sparkle-color: rgba(255, 255, 255, 0.5);
+            --pattern-color: #00f2ff; /* Neon Cyan for Dark Mode */
+            --glow-opacity: 0.4;
+            --bg-speed: 40s;
+            --nav-bg-rgb: 30, 41, 59;
+            --nav-border: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Neon glow for text in dark mode */
+        body.dark-mode h1,
+        body.dark-mode h2,
+        body.dark-mode h3 {
+            text-shadow: 0 0 12px rgba(0, 242, 255, 0.3);
+            animation: neon-pulse 3s ease-in-out infinite;
+        }
+
+        /* Neon borders for cards in dark mode */
+        body.dark-mode .card {
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.05);
+        }
+
+        /* Stronger neon border on hover in dark mode */
+        body.dark-mode .card:hover {
+            border-color: rgba(0, 242, 255, 0.8);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+        }
+
+        /* Neon glow for SNS links and buttons in dark mode */
+        body.dark-mode .sns-link {
+            transition: transform 0.2s, opacity 0.2s, box-shadow 0.3s;
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.3); /* Default blue glow */
+        }
+        body.dark-mode .sns-link.instagram { box-shadow: 0 0 12px rgba(255, 176, 85, 0.3); }
+        body.dark-mode .sns-link.greeen { box-shadow: 0 0 12px rgba(0, 255, 55, 0.3); }
+        body.dark-mode .sns-link.cinoclient { box-shadow: 0 0 12px rgba(255, 255, 0, 0.3); }
+        body.dark-mode .sns-link.lameclient { box-shadow: 0 0 12px rgba(191, 64, 255, 0.3); }
+
+        body.dark-mode .sns-link:hover {
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
+        }
+        body.dark-mode .sns-link.instagram:hover { box-shadow: 0 0 20px rgba(255, 176, 85, 0.6); }
+        body.dark-mode .sns-link.greeen:hover { box-shadow: 0 0 20px rgba(0, 255, 55, 0.6); }
+        body.dark-mode .sns-link.cinoclient:hover { box-shadow: 0 0 20px rgba(255, 255, 0, 0.6); }
+        body.dark-mode .sns-link.lameclient:hover { box-shadow: 0 0 20px rgba(191, 64, 255, 0.6); }
+
+        @keyframes neon-pulse {
+            0%, 100% {
+                text-shadow: 0 0 12px rgba(0, 242, 255, 0.3);
             }
+            50% {
+                text-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
+            }
+        }
+
+        /* Accelerate background movement when hovering over any card */
+        body:has(.card:hover) {
+            --bg-speed: 15s !important;
+        }
+
+        /* Rainbow Mode Animation */
+        @keyframes rainbow-hue {
+            from { filter: hue-rotate(0deg); }
+            to { filter: hue-rotate(360deg); }
+        }
+        @keyframes rainbow-hue-glow {
+            from { filter: blur(8px) hue-rotate(0deg); }
+            to { filter: blur(8px) hue-rotate(360deg); }
+        }
+
+        body.rainbow-mode::before {
+            animation: move-bg var(--bg-speed) linear infinite, rainbow-hue 20s linear infinite;
+            opacity: 0.3; /* Make it slightly more visible in rainbow mode */
+        }
+
+        body.rainbow-mode::after {
+            animation: move-bg var(--bg-speed) linear infinite, rainbow-hue-glow 20s linear infinite;
         }
 
         body {
@@ -30,25 +112,140 @@
             color: var(--text-color);
             line-height: 1.6;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             transition: background-color 0.3s, color 0.3s;
             overflow-x: hidden;
+            padding-top: 60px; /* Nav height */
+            position: relative;
         }
 
-        .profile-card {
-            background: var(--card-bg);
-            width: 90%;
-            max-width: 450px;
-            padding: 2rem;
+        /* Background Geometric Pattern */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background-image: radial-gradient(var(--pattern-color) 0.8px, transparent 0.8px);
+            background-size: 40px 40px;
+            opacity: 0.15;
+            z-index: -1;
+            animation: move-bg var(--bg-speed) linear infinite;
+        }
+
+        /* Background Glow Effect for Neon look */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background-image: radial-gradient(var(--pattern-color) 2px, transparent 2px);
+            background-size: 40px 40px;
+            opacity: var(--glow-opacity);
+            z-index: -2;
+            filter: blur(8px);
+            animation: move-bg var(--bg-speed) linear infinite;
+        }
+
+        @keyframes move-bg {
+            from { transform: translate(0, 0); }
+            to { transform: translate(-50%, -50%); }
+        }
+
+        /* Navigation Updates */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(var(--nav-bg-rgb), var(--nav-opacity));
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--nav-border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 2rem;
+        }
+
+        .home-brand {
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-decoration: none;
+            color: var(--primary-color);
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .home-brand::before {
+            content: '🏠';
+            font-size: 1.2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        nav a:hover { color: var(--primary-color); }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--nav-border);
+            color: var(--text-color);
+            padding: 6px 12px;
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover { background: rgba(var(--nav-bg-rgb), 0.3); }
+        .theme-toggle .sun { display: block; }
+        .theme-toggle .moon { display: none; }
+        body.dark-mode .theme-toggle .sun { display: none; }
+        body.dark-mode .theme-toggle .moon { display: block; }
+        
+        /* Active state for rainbow toggle */
+        body.rainbow-mode #rainbow-toggle { border-color: var(--primary-color); box-shadow: 0 0 10px var(--primary-color); }
+        #rainbow-toggle span { filter: grayscale(1); transition: filter 0.3s; }
+        body.rainbow-mode #rainbow-toggle span { filter: grayscale(0); }
+
+        /* Layout Containers */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            padding: 100px 0;
+        }
+
+        .hero {
             text-align: center;
-            position: relative;
-            z-index: 1;
-            transition: background-color 0.3s;
+            padding: 80px 0;
+            background: linear-gradient(180deg, var(--card-bg), var(--bg-color));
         }
 
         .avatar {
@@ -64,7 +261,14 @@
 
         h1 {
             margin: 0 0 0.5rem 0;
-            font-size: 1.75rem;
+            font-size: 3rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            border-left: 6px solid var(--primary-color);
+            padding-left: 1rem;
         }
 
         .job-title {
@@ -74,20 +278,75 @@
             display: block;
         }
 
-        .bio {
-            font-size: 0.95rem;
+        .card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             margin-bottom: 2rem;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        }
+
+        /* Project Card Specific Styling */
+        .project-card {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
             text-align: left;
         }
 
-        .sns-links {
+        .project-icon {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 18px;
             display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 15px rgba(37, 99, 235, 0.2);
+            overflow: hidden; /* Ensure image corners are rounded */
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .project-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .card:hover .project-icon img { transform: scale(1.2) rotate(10deg); }
+
+        .project-info {
+            flex-grow: 1;
+        }
+
+        .grid .card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .project-info h3 { margin-top: 0; margin-bottom: 0.5rem; }
+
+        .bio {
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        /* Specific grid for projects to allow wider horizontal cards */
+        .project-grid {
+            grid-template-columns: 1fr;
         }
 
         .sns-link {
-            text-decoration: none;
+            text-decoration: none !important;
             color: white;
             background: var(--primary-color);
             padding: 0.8rem;
@@ -106,11 +365,21 @@
         .sns-link.cinoclient { background: #ffff00; color: #00bfff; }
         .sns-link.lameclient { background: #bf40ff; }
 
-        footer {
-            margin-top: 2rem;
+        /* Tags */
+        .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+        .tag {
+            background: var(--bg-color);
+            padding: 4px 12px;
+            border-radius: 20px;
             font-size: 0.8rem;
-            color: #94a3b8;
+            border: 1px solid rgba(0,0,0,0.1);
         }
+
+        footer {
+            text-align: center;
+            padding: 4rem 0;
+            background: var(--card-bg);
+        } 
 
         /* Sparkle Effect */
         .sparkle {
@@ -130,55 +399,234 @@
             50% { opacity: 1; }
             100% { transform: scale(1.5); opacity: 0; }
         }
+
+        /* Neon Splash Effect */
+        .neon-particle {
+            position: fixed;
+            pointer-events: none;
+            width: 8px;
+            height: 8px;
+            z-index: 2000;
+            animation: neon-splash 0.8s cubic-bezier(0.1, 0.5, 0.3, 1) forwards;
+        }
+
+        @keyframes neon-splash {
+            0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Neon Visitor Counter Styles */
+        .visitor-counter {
+            margin-bottom: 2rem;
+            display: inline-block;
+            padding: 12px 24px;
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            background: rgba(var(--nav-bg-rgb), 0.3);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .visitor-counter {
+            border-color: var(--pattern-color);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2), inset 0 0 10px rgba(0, 242, 255, 0.1);
+        }
+
+        .counter-digits {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+        }
+
+        body.dark-mode .counter-digits {
+            color: var(--pattern-color);
+            text-shadow: 0 0 10px var(--pattern-color), 0 0 20px var(--pattern-color);
+        }
+
+        body.rainbow-mode .counter-digits {
+            animation: rainbow-hue 20s linear infinite;
+        }
+
+        /* Flash effect when counter increments */
+        .counter-flash {
+            animation: counter-flash-anim 0.5s ease-out;
+        }
+
+        @keyframes counter-flash-anim {
+            0% {
+                text-shadow: 0 0 30px var(--pattern-color), 0 0 50px var(--pattern-color);
+                transform: scale(1.1);
+            }
+            100% {
+                text-shadow: 0 0 10px var(--pattern-color), 0 0 20px var(--pattern-color);
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .project-card { flex-direction: column; text-align: center; gap: 1rem; }
+            h1 { font-size: 2.2rem; }
+        }
     </style>
 </head>
-<body>
-    <div class="profile-card">
-        <img src="prflcn.jpg" alt="プロフィール写真" class="avatar">
-        <h1>なゆ</h1>
-        <span class="job-title">エンジニア / デザイナー</span>
-        
-        <div class="bio">
-            観光や旅をしたり、ツールやサイトを作ってるものです。<br>
-            MBTI: INFJ-A<br>
-            変人
-            Discord: nayu_hime
+<body id="home">
+    <nav>
+        <div class="nav-container">
+            <a href="#home" class="home-brand">NAYU</a>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#hobbies">Hobbies</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="theme-toggle" id="rainbow-toggle" title="レインボーモード">
+                    <span>🌈</span>
+                </button>
+                <button class="theme-toggle" id="theme-toggle" title="テーマを切り替える">
+                    <span class="sun">☀️</span>
+                    <span class="moon">🌙</span>
+                </button>
+            </div>
         </div>
+    </nav>
 
-        <div class="sns-links">
-            SNS Account
-            <a href="https://www.instagram.com/Nayu_hime/" class="sns-link instagram">Instagram</a>
-
-            ツール
-            <a href="https://yj-requin.github.io/ImageConverter/" class="sns-link greeen">pngConverter</a>
-
-            クライアント
-            <a href="https://yj-requin.github.io/CinoClient/" class="sns-link cinoclient">CinoClient</a>
-            <!-- <a href="https://yj-requin.github.io/LameClient/" class="sns-link lameclient">LameClient</a> -->
-
+    <header class="hero reveal">
+        <div class="container">
+            <img src="prflcn.png" alt="プロフィール写真" class="avatar">
+            <h1>なゆ</h1>
+            <span class="job-title">エンジニア / デザイナー</span>
+            <p>観光や旅、ものづくりを愛するクリエイター</p>
         </div>
-        
-        <div class="bio">
-            <h4>好きなアニメ: </h4>魔王学院の不適合者、食戟のソーマ、コードギアス、赤髪の白雪姫、俺レベ、即死チート、シャーロット、ヒロアカ、ごちうさ<br>
-            <h4>好きなラノベ: </h4>魔王学院の不適合者、ロクアカ<br>
-            <h4>好きなキャラ: </h4>アノス・ヴォルディゴード、ミーシャネクロン、初音ミク、<br>
-            <h4>好きなゲーム: </h4>Minecraft、スマブラ、テトリス、ペルソナ5、ファンタジーライフ、アルティメットチキンホース<br>
-            <h4>好きなカラー: </h4>白色、水色、オレンジ色
-        </div>
+    </header>
 
-        <div class="contact-info" style="margin-top: 1.5rem; font-size: 0.9rem; border-top: 1px solid var(--sub-text); padding-top: 1rem; opacity: 0.8; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail">
-                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-            </svg>
-            Contact: <a href="mailto:hibiki.kinamine@gmail.com?subject=件名" style="color: var(--text-color); font-weight: bold; text-decoration: none;">hibiki.kinamine@gmail.com</a>
-            
-            <a href="mailto:hibiki.kinamine@gmail.com?subject=件名">お問い合わせ</a>
-        </div>
+    <main class="container">
+        <section id="about" class="reveal">
+            <h2>About Me</h2>
+            <div class="card">
+                <div class="bio">
+                    観光や旅をしたり、ツールやサイトを作っているエンジニアです。<br>
+                    <strong>MBTI:</strong> INFJ-A / <strong>Discord:</strong> nayu_hime<br>
+                    少し風変わりな視点から、新しいものを作り出すのが好きです。
+                </div>
+                <div style="margin-top:1rem;">
+                    <a href="https://www.instagram.com/Nayu_hime/" class="sns-link instagram" style="display:inline-block; width:auto; padding: 0.5rem 1.5rem;">Instagram</a>
+                </div>
+            </div>
+        </section>
 
-        <h6>読んでくれてありがとう！</h6>
-        <footer>© 2026 なゆ</footer>
-    </div>
+        <section id="projects" class="reveal">
+            <h2>Projects & Tools</h2>
+            <div class="grid project-grid">
+                <div class="card project-card" data-splash-color="#00ff37">
+                    <div class="project-icon">
+                        <img src="pngconvic.png" alt="pngConverter">
+                    </div>
+                    <div class="project-info">
+                        <h3>pngConverter</h3>
+                        <p>画像を素早く変換するシンプルで強力なツールです。ブラウザ上で完結するため安全に使用できます。</p>
+                        <a href="https://yj-requin.github.io/ImageConverter/" class="sns-link greeen" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">View Project</a>
+                    </div>
+                </div>
+
+                <div class="card project-card" data-splash-color="#ffff00">
+                    <div class="project-icon">
+                        <img src="CinoClientIco.png" alt="CinoClient">
+                    </div>
+                    <div class="project-info">
+                        <h3>CinoClient</h3>
+                        <p>
+                            他のクライアントより軽量化、操作性よく使いやすいようなクライアントを目指している。<br>
+                            UIに凝っており、アイテムに関するクライアントでは最強である。<br>
+                            戦闘系はそんなに入っておらず、RPGやワールドの手助けなどに向いてます。<br>
+                            他のクライアントと互換性はほとんどなく、同時に起動することができます。<br>
+                            (例): PinkDiamond, NukleClient, FdyCrock, ....etc<br>
+                        </p>
+                        <a href="https://yj-requin.github.io/CinoClient/" class="sns-link cinoclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">View Project</a>
+                    </div>
+                </div>
+
+                <!-- <div class="card project-card" data-splash-color="#bf40ff">
+                    <div class="project-icon">
+                        <img src="LameClientIco.png" alt="LameClient">
+                    </div>
+                    <div class="project-info">
+                        <h3>LameClient</h3>
+                        <p>1つで完結する便利なクライアント。現在は信頼したユーザーにしか使用できません。</p>
+                        <a href="https://yj-requin.github.io/LameClient/" class="sns-link lameclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">View Project</a>
+                    </div>
+                </div> -->
+            </div>
+        </section>
+
+        <section id="hobbies" class="reveal">
+            <h2>Interests & Favorites</h2>
+            <div class="grid">
+                <div class="card">
+                    <h4>好きなアニメ</h4>
+                    <div class="tags">
+                        <span class="tag">魔王学院の不適合者</span><span class="tag">食戟のソーマ</span><span class="tag">コードギアス</span><span class="tag">赤髪の白雪姫</span><span class="tag">俺レベ</span><span class="tag">即死チート</span><span class="tag">シャーロット</span><span class="tag">ヒロアカ</span><span class="tag">ごちうさ</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <h4>好きなゲーム</h4>
+                    <div class="tags">
+                        <span class="tag">Minecraft</span><span class="tag">スマブラ</span><span class="tag">テトリス</span><span class="tag">ペルソナ5</span><span class="tag">ファンタジーライフ</span><span class="tag">アルティメットチキンホース</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <h4>好きなキャラ / カラー</h4>
+                    <p>アノス、ミーシャ、初音ミク</p>
+                    <div class="tags">
+                        <span class="tag" style="background:#fff; color:#000;">白色</span>
+                        <span class="tag" style="background:#87CEEB;">水色</span>
+                        <span class="tag" style="background:#FFA500;">オレンジ色</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="reveal" style="text-align: center;">
+            <h2>Get In Touch</h2>
+            <div class="card">
+                <div class="contact-info" style="font-size: 1.1rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail">
+                            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                        </svg>
+                        <a href="mailto:hibiki.kinamine@gmail.com?subject=お問い合わせ" style="color: var(--text-color); font-weight: bold; text-decoration: none;">hibiki.kinamine@gmail.com</a>
+                    </div>
+                    <p>お仕事のご依頼やメッセージ、お気軽にどうぞ！</p>
+                    <a href="mailto:hibiki.kinamine@gmail.com?subject=お問い合わせ" class="sns-link" style="width:200px;">メールを送る</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="visitor-counter reveal">
+                <div style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 5px; letter-spacing: 1px;">VISITOR COUNT</div>
+                <span class="counter-digits" id="visitor-count">000</span>
+            </div>
+            <p>読んでくれてありがとう！</p>
+            <p>© 2026 なゆ</p>
+        </div>
+    </footer>
     
     <script>
         function createSparkle() {
@@ -191,6 +639,152 @@
             setTimeout(() => sparkle.remove(), 2000);
         }
         setInterval(createSparkle, 200);
+
+        // Scroll Reveal Logic
+        function reveal() {
+            const reveals = document.querySelectorAll(".reveal");
+            for (let i = 0; i < reveals.length; i++) {
+                const windowHeight = window.innerHeight;
+                const elementTop = reveals[i].getBoundingClientRect().top;
+                const elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+
+        window.addEventListener("scroll", reveal);
+        // Initial check
+        reveal();
+
+        // Dynamic Nav Transparency
+        function updateNav() {
+            const nav = document.querySelector('nav');
+            const scrollPos = window.scrollY;
+            const opacity = Math.min(0.9, scrollPos / 100);
+            nav.style.setProperty('--nav-opacity', opacity);
+        }
+        window.addEventListener('scroll', updateNav);
+        updateNav();
+
+        // Manual Dark Mode Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            body.classList.add('dark-mode');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+
+        // Rainbow Mode Logic
+        const rainbowToggle = document.getElementById('rainbow-toggle');
+        
+        if (localStorage.getItem('rainbow') === 'enabled') {
+            body.classList.add('rainbow-mode');
+        }
+
+        rainbowToggle.addEventListener('click', () => {
+            body.classList.toggle('rainbow-mode');
+            localStorage.setItem('rainbow', body.classList.contains('rainbow-mode') ? 'enabled' : 'disabled');
+        });
+
+        // Neon Splash Click Effect
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('mousedown', (e) => {
+                const color = card.dataset.splashColor || getComputedStyle(document.body).getPropertyValue('--pattern-color').trim();
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'neon-particle';
+
+                    // 形状をランダムに設定 (0:円, 1:四角, 2:星, 3:三角)
+                    const shapeType = Math.floor(Math.random() * 4);
+                    particle.style.backgroundColor = color;
+                    
+                    if (shapeType === 0) { // 円
+                        particle.style.borderRadius = '50%';
+                        particle.style.boxShadow = `0 0 10px ${color}`;
+                    } else if (shapeType === 1) { // 四角
+                        particle.style.boxShadow = `0 0 10px ${color}`;
+                    } else if (shapeType === 2) { // 星
+                        particle.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
+                        particle.style.filter = `drop-shadow(0 0 5px ${color})`;
+                    } else { // 三角
+                        particle.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+                        particle.style.filter = `drop-shadow(0 0 5px ${color})`;
+                    }
+                    
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 40 + Math.random() * 120;
+                    const dx = Math.cos(angle) * distance;
+                    const dy = Math.sin(angle) * distance;
+                    
+                    particle.style.left = e.clientX + 'px';
+                    particle.style.top = e.clientY + 'px';
+                    particle.style.setProperty('--dx', `${dx}px`);
+                    particle.style.setProperty('--dy', `${dy}px`);
+                    
+                    document.body.appendChild(particle);
+                    setTimeout(() => particle.remove(), 800);
+                }
+            });
+        });
+
+        // Visitor Counter Simulation
+        const counterElement = document.getElementById('visitor-count');
+        let count = 0; // 初期値（モック）
+
+        // レトロなリレー音を生成する関数
+        let audioCtx = null;
+        function playRelayClick() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'square'; // レトロ感のある矩形波
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.02);
+
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.02);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.02);
+            } catch (e) {
+                console.error("Audio error:", e);
+            }
+        }
+        
+        function updateCounter() {
+            const increment = Math.floor(Math.random() * 2);
+            if (increment > 0) {
+                count += increment;
+                counterElement.textContent = count.toString().padStart(7, '0');
+                
+                // 音を鳴らす
+                playRelayClick();
+                
+                // フラッシュエフェクトを適用
+                counterElement.classList.remove('counter-flash');
+                void counterElement.offsetWidth; // リフローを強制して再アニメーション可能にする
+                counterElement.classList.add('counter-flash');
+            }
+        }
+        setInterval(updateCounter, 8000);
+        updateCounter();
     </script>
 </body>
 </html>
