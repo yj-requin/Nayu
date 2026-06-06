@@ -427,55 +427,6 @@
             transform: translateY(0);
         }
 
-        /* Neon Visitor Counter Styles */
-        .visitor-counter {
-            margin-bottom: 2rem;
-            display: inline-block;
-            padding: 12px 24px;
-            border: 2px solid var(--primary-color);
-            border-radius: 12px;
-            background: rgba(var(--nav-bg-rgb), 0.3);
-            transition: all 0.3s ease;
-        }
-
-        body.dark-mode .visitor-counter {
-            border-color: var(--pattern-color);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2), inset 0 0 10px rgba(0, 242, 255, 0.1);
-        }
-
-        .counter-digits {
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 1.8rem;
-            font-weight: bold;
-            letter-spacing: 4px;
-            color: var(--primary-color);
-        }
-
-        body.dark-mode .counter-digits {
-            color: var(--pattern-color);
-            text-shadow: 0 0 10px var(--pattern-color), 0 0 20px var(--pattern-color);
-        }
-
-        body.rainbow-mode .counter-digits {
-            animation: rainbow-hue 20s linear infinite;
-        }
-
-        /* Flash effect when counter increments */
-        .counter-flash {
-            animation: counter-flash-anim 0.5s ease-out;
-        }
-
-        @keyframes counter-flash-anim {
-            0% {
-                text-shadow: 0 0 30px var(--pattern-color), 0 0 50px var(--pattern-color);
-                transform: scale(1.1);
-            }
-            100% {
-                text-shadow: 0 0 10px var(--pattern-color), 0 0 20px var(--pattern-color);
-                transform: scale(1);
-            }
-        }
-
         @media (max-width: 600px) {
             .project-card { flex-direction: column; text-align: center; gap: 1rem; }
             h1 { font-size: 2.2rem; }
@@ -510,17 +461,16 @@
             <h1>なゆ</h1>
             <span class="job-title">エンジニア / デザイナー</span>
             <p>観光や旅、ものづくりを愛するクリエイター</p>
+            <strong>MBTI:</strong> INFJ-A / <strong>Discord:</strong> nayu_hime<br>
         </div>
     </header>
 
     <main class="container">
         <section id="about" class="reveal">
-            <h2>About Me</h2>
+            <h2>SNS Account</h2>
             <div class="card">
                 <div class="bio">
-                    観光や旅をしたり、ツールやサイトを作っているエンジニアです。<br>
-                    <strong>MBTI:</strong> INFJ-A / <strong>Discord:</strong> nayu_hime<br>
-                    少し風変わりな視点から、新しいものを作り出すのが好きです。
+                    投稿はしなく、ログインも少ないですが、Instagramだけでも共有しておきます。
                 </div>
                 <div style="margin-top:1rem;">
                     <a href="https://www.instagram.com/Nayu_hime/" class="sns-link instagram" style="display:inline-block; width:auto; padding: 0.5rem 1.5rem;">Instagram</a>
@@ -538,7 +488,7 @@
                     <div class="project-info">
                         <h3>pngConverter</h3>
                         <p>画像を素早く変換するシンプルで強力なツールです。ブラウザ上で完結するため安全に使用できます。</p>
-                        <a href="https://yj-requin.github.io/ImageConverter/" class="sns-link greeen" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">View Project</a>
+                        <a href="https://yj-requin.github.io/ImageConverter/" class="sns-link greeen" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">変換サイトへ飛ぶ</a>
                     </div>
                 </div>
 
@@ -555,20 +505,23 @@
                             他のクライアントと互換性はほとんどなく、同時に起動することができます。<br>
                             (例): PinkDiamond, NukleClient, FdyCrock, ....etc<br>
                         </p>
-                        <a href="https://yj-requin.github.io/CinoClient/" class="sns-link cinoclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">View Project</a>
+                        <a href="https://yj-requin.github.io/CinoClient/" class="sns-link cinoclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
                     </div>
                 </div>
 
-                <!-- <div class="card project-card" data-splash-color="#bf40ff">
+                <div class="card project-card" data-splash-color="#bf40ff">
                     <div class="project-icon">
                         <img src="LameClientIco.png" alt="LameClient">
                     </div>
                     <div class="project-info">
                         <h3>LameClient</h3>
-                        <p>1つで完結する便利なクライアント。現在は信頼したユーザーにしか使用できません。</p>
-                        <a href="https://yj-requin.github.io/LameClient/" class="sns-link lameclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">View Project</a>
+                        <p>
+                            1つで完結する便利なクライアント。現在は信頼したユーザーにしか使用できません。<br>
+                            サイトのバージョンは止まってます。<br>
+                        </p>
+                        <a href="https://yj-requin.github.io/LameClient/" class="sns-link lameclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
                     </div>
-                </div> -->
+                </div>
             </div>
         </section>
 
@@ -578,21 +531,35 @@
                 <div class="card">
                     <h4>好きなアニメ</h4>
                     <div class="tags">
-                        <span class="tag">魔王学院の不適合者</span><span class="tag">食戟のソーマ</span><span class="tag">コードギアス</span><span class="tag">赤髪の白雪姫</span><span class="tag">俺レベ</span><span class="tag">即死チート</span><span class="tag">シャーロット</span><span class="tag">ヒロアカ</span><span class="tag">ごちうさ</span>
+                        <span class="tag">魔王学院の不適合者</span>
+                        <span class="tag">食戟のソーマ</span>
+                        <span class="tag">コードギアス</span>
+                        <span class="tag">赤髪の白雪姫</span>
+                        <span class="tag">俺だけレベルアップな件</span>
+                        <span class="tag">即死チートが最強すぎて、異世界のやつらがまるで相手にならないんですが。</span>
+                        <span class="tag">シャーロット</span>
+                        <span class="tag">僕のヒーローアカデミア</span>
+                        <span class="tag">一瞬で治療していたのに役立たずと追放された天才治癒師、闇ヒーラーとして楽しく生きる</span>
+                        <span class="tag">転生賢者の異世界ライフ ～第二の職業を得て、世界最強になりました～</span>
                     </div>
                 </div>
                 <div class="card">
                     <h4>好きなゲーム</h4>
                     <div class="tags">
-                        <span class="tag">Minecraft</span><span class="tag">スマブラ</span><span class="tag">テトリス</span><span class="tag">ペルソナ5</span><span class="tag">ファンタジーライフ</span><span class="tag">アルティメットチキンホース</span>
+                        <span class="tag">Minecraft</span>
+                        <span class="tag">大乱闘スマッシュブラザーズSP</span>
+                        <span class="tag">テトリス</span>
+                        <span class="tag">ペルソナ5 ロイヤル</span>
+                        <span class="tag">ファンタジーライフi</span>
+                        <span class="tag">アルティメットチキンホース</span>
                     </div>
                 </div>
                 <div class="card">
                     <h4>好きなキャラ / カラー</h4>
-                    <p>アノス、ミーシャ、初音ミク</p>
+                    <p>アノス, ミーシャ, アオユキ, 初音ミク</p>
                     <div class="tags">
                         <span class="tag" style="background:#fff; color:#000;">白色</span>
-                        <span class="tag" style="background:#87CEEB;">水色</span>
+                        <span class="tag" style="background:#5dfff7;">水色</span>
                         <span class="tag" style="background:#FFA500;">オレンジ色</span>
                     </div>
                 </div>
@@ -619,12 +586,8 @@
 
     <footer>
         <div class="container">
-            <div class="visitor-counter reveal">
-                <div style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 5px; letter-spacing: 1px;">VISITOR COUNT</div>
-                <span class="counter-digits" id="visitor-count">000</span>
-            </div>
             <p>読んでくれてありがとう！</p>
-            <p>© 2026 なゆ</p>
+            <p>© 2024 なゆ</p>
         </div>
     </footer>
     
@@ -733,58 +696,6 @@
             });
         });
 
-        // Visitor Counter Simulation
-        const counterElement = document.getElementById('visitor-count');
-        let count = 0; // 初期値（モック）
-
-        // レトロなリレー音を生成する関数
-        let audioCtx = null;
-        function playRelayClick() {
-            try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-
-                osc.type = 'square'; // レトロ感のある矩形波
-                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.02);
-
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.02);
-
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.02);
-            } catch (e) {
-                console.error("Audio error:", e);
-            }
-        }
-        
-        function updateCounter() {
-            const increment = Math.floor(Math.random() * 2);
-            if (increment > 0) {
-                count += increment;
-                counterElement.textContent = count.toString().padStart(7, '0');
-                
-                // 音を鳴らす
-                playRelayClick();
-                
-                // フラッシュエフェクトを適用
-                counterElement.classList.remove('counter-flash');
-                void counterElement.offsetWidth; // リフローを強制して再アニメーション可能にする
-                counterElement.classList.add('counter-flash');
-            }
-        }
-        setInterval(updateCounter, 8000);
-        updateCounter();
     </script>
 </body>
 </html>
