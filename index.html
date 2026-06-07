@@ -118,6 +118,14 @@
             position: relative;
         }
 
+        /* 画像のコピー・保存・ドラッグを制限する設定 */
+        img {
+            pointer-events: none; /* クリックや右クリックを反応させない */
+            -webkit-touch-callout: none; /* スマホでの長押しメニューを禁止 */
+            -webkit-user-drag: none; /* ドラッグを禁止（Safari/Chrome） */
+            user-select: none; /* テキスト選択のように画像が選択されるのを防ぐ */
+        }
+
         /* Background Geometric Pattern */
         body::before {
             content: "";
@@ -442,6 +450,7 @@
                     <li><a href="#about">About</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#hobbies">Hobbies</a></li>
+                    <li><a href="#artists">Artists</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
                 <button class="theme-toggle" id="rainbow-toggle" title="レインボーモード">
@@ -457,7 +466,7 @@
 
     <header class="hero reveal">
         <div class="container">
-            <img src="prflcn.png" alt="プロフィール写真" class="avatar">
+            <img src="prflcn.png" alt="プロフィール写真" class="avatar" draggable="false">
             <h1>なゆ</h1>
             <span class="job-title">エンジニア / デザイナー</span>
             <p>観光や旅、ものづくりを愛するクリエイター</p>
@@ -483,7 +492,7 @@
             <div class="grid project-grid">
                 <div class="card project-card" data-splash-color="#00ff37">
                     <div class="project-icon">
-                        <img src="pngconvic.png" alt="pngConverter">
+                        <img src="pngconvic.png" alt="pngConverter" draggable="false">
                     </div>
                     <div class="project-info">
                         <h3>pngConverter</h3>
@@ -494,7 +503,7 @@
 
                 <div class="card project-card" data-splash-color="#ffff00">
                     <div class="project-icon">
-                        <img src="CinoClientIco.png" alt="CinoClient">
+                        <img src="CinoClientIco.png" alt="CinoClient" draggable="false">
                     </div>
                     <div class="project-info">
                         <h3>CinoClient</h3>
@@ -511,7 +520,7 @@
 
                 <div class="card project-card" data-splash-color="#bf40ff">
                     <div class="project-icon">
-                        <img src="LameClientIco.png" alt="LameClient">
+                        <img src="LameClientIco.png" alt="LameClient" draggable="false">
                     </div>
                     <div class="project-info">
                         <h3>LameClient</h3>
@@ -532,15 +541,12 @@
                     <h4>好きなアニメ</h4>
                     <div class="tags">
                         <span class="tag">魔王学院の不適合者</span>
+                        <span class="tag">シャーロット</span>
                         <span class="tag">食戟のソーマ</span>
                         <span class="tag">コードギアス</span>
                         <span class="tag">赤髪の白雪姫</span>
                         <span class="tag">俺だけレベルアップな件</span>
-                        <span class="tag">即死チートが最強すぎて、異世界のやつらがまるで相手にならないんですが。</span>
-                        <span class="tag">シャーロット</span>
-                        <span class="tag">僕のヒーローアカデミア</span>
-                        <span class="tag">一瞬で治療していたのに役立たずと追放された天才治癒師、闇ヒーラーとして楽しく生きる</span>
-                        <span class="tag">転生賢者の異世界ライフ ～第二の職業を得て、世界最強になりました～</span>
+                        <span class="tag">転生賢者の異世界ライフ</span>
                     </div>
                 </div>
                 <div class="card">
@@ -695,6 +701,46 @@
                 }
             });
         });
+
+        // 右クリックを完全に禁止する（画像以外も含む）
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        }, false);
+
+        // 特定のキー操作（F12, Ctrl+Shift+I, Ctrl+Uなど）を禁止する
+        document.addEventListener('keydown', (e) => {
+            // F12キーを無効化
+            if (e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (開発者ツール)
+            // Ctrl+U (ソース表示) を無効化
+            if (e.ctrlKey && (e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67) || e.keyCode === 85)) {
+                e.preventDefault();
+                return false;
+            }
+        }, false);
+
+        // 開発者ツールが開かれた時の対策
+        (function() {
+            const warningStyle = "color: red; font-size: 40px; font-weight: bold; text-shadow: 2px 2px 0 black;";
+            const messageStyle = "font-size: 16px; font-weight: bold;";
+
+            function printWarning() {
+                console.clear(); // コンソールを真っさらにする
+                console.log("%cSTOP!", warningStyle);
+                console.log("%cこのエリアは開発者専用です。画像の保存やコードのコピーは禁止されています。", messageStyle);
+            }
+
+            // 1秒ごとに実行してコンソールを使い物にならなくする
+            setInterval(printWarning, 1000);
+
+            // 開発者ツールが開いている間、強制的にデバッガーを起動させて動作を止める
+            setInterval(function() {
+                debugger;
+            }, 100);
+        })();
 
     </script>
 </body>
