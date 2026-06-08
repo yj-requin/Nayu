@@ -577,7 +577,7 @@
             </div>
         </section>
 
-        <section id="hobbies" class="reveal">
+        <!-- <section id="hobbies" class="reveal">
             <h2>Interests & Favorites</h2>
             <div class="grid">
                 <div class="card">
@@ -613,7 +613,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <section id="contact" class="reveal" style="text-align: center;">
             <h2>Get In Touch</h2>
@@ -752,7 +752,7 @@
             const projectCard = document.getElementById('lame-project-card');
             
             // パスワードを '神田' に設定しています。自由に変更してください。
-            if (pwInput.value === '神田') {
+            if (pwInput.value === '神田' || pwInput.value === 'Tokyo') {
                 // クラッカー（パーティクル）演出の追加
                 const rect = authCard.getBoundingClientRect();
                 const centerX = rect.left + rect.width / 2 + window.scrollX;
