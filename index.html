@@ -471,10 +471,10 @@
 <body id="home">
     <nav>
         <div class="nav-container">
-            <a href="#home" class="home-brand">NAYU</a>
+            <a href="#home" class="home-brand">なゆ</a>
             <div style="display: flex; align-items: center; gap: 1.5rem;">
                 <ul>
-                    <li><a href="#about">About</a></li>
+                    <!-- <li><a href="#about">About</a></li> -->
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#hobbies">Hobbies</a></li>
                     <li><a href="#artists">Artists</a></li>
@@ -539,45 +539,46 @@
                             UIに凝っており、アイテムに関するクライアントでは最強である。<br>
                             戦闘系はそんなに入っておらず、RPGやワールドの手助けなどに向いてます。<br>
                             他のクライアントと互換性はほとんどなく、同時に起動することができます。<br>
-                            (例): PinkDiamond, NukleClient, FdyCrock, ....etc<br>
+                            (例): PinkDiamond, yuiS, FdyCrock, ....etc<br>
                         </p>
                         <a href="https://yj-requin.github.io/CinoClient/" class="sns-link cinoclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
                     </div>
                 </div>
 
                 <!-- パスワード入力用のプレースホルダーカード -->
-                <div id="lame-auth-card" class="card project-card" data-splash-color="#bf40ff">
+                <div id="yuis-auth-card" class="card project-card" data-splash-color="#bf40ff">
                     <div class="project-icon" style="background: #334155; display: flex; align-items: center; justify-content: center;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     </div>
                     <div class="project-info">
-                        <h3>Private Project</h3>
+                        <h3>非公開サイト</h3>
                         <p>このプロジェクトを閲覧するにはパスワードが必要です。</p>
-                        <div id="lame-auth-container" style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-                            <input type="password" id="lame-password" placeholder="パスワードを入力" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--nav-border); background: var(--bg-color); color: var(--text-color); flex-grow: 1; max-width: 200px; outline: none;">
-                            <button id="lame-auth-btn" style="padding: 8px 16px; border-radius: 8px; border: none; background: var(--primary-color); color: white; cursor: pointer; font-weight: bold;">閲覧</button>
+                        <div id="yuis-auth-container" style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                            <input type="password" id="yuis-password" placeholder="パスワードを入力" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--nav-border); background: var(--bg-color); color: var(--text-color); flex-grow: 1; max-width: 200px; outline: none;">
+                            <button id="yuis-auth-btn" style="padding: 8px 16px; border-radius: 8px; border: none; background: var(--primary-color); color: white; cursor: pointer; font-weight: bold;">閲覧</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- 認証後に表示される実際のカード -->
-                <div id="lame-project-card" class="card project-card" data-splash-color="#bf40ff" style="display: none;">
+                <div id="yuis-project-card" class="card project-card" data-splash-color="#bf40ff" style="display: none;">
                     <div class="project-icon">
-                        <img src="LameClientIco.png" alt="LameClient" draggable="false">
+                        <img src="yuisIco.png" alt="yuiS" draggable="false">
                     </div>
                     <div class="project-info">
-                        <h3>Null</h3>
+                        <h3>yuiS</h3>
                         <p>
                             1つで完結する便利なクライアント。現在は信頼したユーザーにしか使用できません。<br>
                             サイトのバージョンは止まってます。<br>
+                            作成者はゆいさんです。<br>
                         </p>
-                        <a href="https://yj-requin.github.io/Null/" class="sns-link lameclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
+                        <a href="https://yj-requin.github.io/yuis" class="sns-link yuis" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- <section id="hobbies" class="reveal">
+        <section id="hobbies" class="reveal">
             <h2>Interests & Favorites</h2>
             <div class="grid">
                 <div class="card">
@@ -587,8 +588,6 @@
                         <span class="tag">シャーロット</span>
                         <span class="tag">食戟のソーマ</span>
                         <span class="tag">コードギアス</span>
-                        <span class="tag">赤髪の白雪姫</span>
-                        <span class="tag">俺だけレベルアップな件</span>
                         <span class="tag">転生賢者の異世界ライフ</span>
                     </div>
                 </div>
@@ -613,7 +612,7 @@
                     </div>
                 </div>
             </div>
-        </section> -->
+        </section>
 
         <section id="contact" class="reveal" style="text-align: center;">
             <h2>Get In Touch</h2>
@@ -747,12 +746,12 @@
 
         // LameClient Password Logic
         const unlockLame = () => {
-            const pwInput = document.getElementById('lame-password');
-            const authCard = document.getElementById('lame-auth-card');
-            const projectCard = document.getElementById('lame-project-card');
+            const pwInput = document.getElementById('yuis-password');
+            const authCard = document.getElementById('yuis-auth-card');
+            const projectCard = document.getElementById('yuis-project-card');
             
             // パスワードを '神田' に設定しています。自由に変更してください。
-            if (pwInput.value === '神田' || pwInput.value === 'Tokyo') {
+            if (pwInput.value === 'Shinjuku' || pwInput.value === 'Tokyo') {
                 // クラッカー（パーティクル）演出の追加
                 const rect = authCard.getBoundingClientRect();
                 const centerX = rect.left + rect.width / 2 + window.scrollX;
@@ -794,9 +793,9 @@
                 }, 400);
             }
         };
-        document.getElementById('lame-auth-btn')?.addEventListener('click', unlockLame);
-        document.getElementById('lame-password')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') unlockLame();
+        document.getElementById('yuis-auth-btn')?.addEventListener('click', unlockame);
+        document.getElementById('yuis-password')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') unlockame();
         });
 
         // 右クリックを完全に禁止する（画像以外も含む）
