@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>CinoClient Ver1.2.X</title>
+
+<style>
+:root {
+    --theme-color: rgb(255, 255, 255);
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: url("logo/main.png") no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+}
+
+.container {
+    width: 890px;
+    margin: 60px auto;
+    background: rgba(99, 109, 126, 0.7);
+    padding: 20px;
+    border-radius: 6px;
+}
+
+/* タブ */
+.tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    color: white;
+}
+
+.tab {
+    padding: 10px 15px;
+    background: #5c6f90;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    color: white;
+}
+
+.tab.active {
+    border-bottom: 3px solid var(--theme-color);
+}
+
+/* モジュール */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.module {
+    padding: 10px;
+    border: 2px solid var(--theme-color);
+    text-align: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    transition: 0.2s;
+    color: white;
+}
+
+.module:hover {
+    transform: scale(1.05);
+}
+
+/* 選択状態 */
+.module.selected {
+    background: rgba(255,255,255,0.2);
+}
+
+/* 下の説明パネル */
+.desc-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-top: 2px solid var(--theme-color);
+}
+
+/* 虹色アニメーション */
+@keyframes rainbow-anim {
+    0%   { border-color: hsl(0, 100%, 50%);   box-shadow: 0 0 15px hsl(0, 100%, 50%);   color: hsl(0, 100%, 85%); }
+    25%  { border-color: hsl(90, 100%, 50%);  box-shadow: 0 0 15px hsl(90, 100%, 50%);  color: hsl(90, 100%, 85%); }
+    50%  { border-color: hsl(180, 100%, 50%); box-shadow: 0 0 15px hsl(180, 100%, 50%); color: hsl(180, 100%, 85%); }
+    75%  { border-color: hsl(270, 100%, 50%); box-shadow: 0 0 15px hsl(270, 100%, 50%); color: hsl(270, 100%, 85%); }
+    100% { border-color: hsl(360, 100%, 50%); box-shadow: 0 0 15px hsl(360, 100%, 50%); color: hsl(360, 100%, 85%); }
+}
+
+.rainbow-mode .tab.active,
+.rainbow-mode .module,
+.rainbow-mode .desc-box {
+    animation: rainbow-anim 3s linear infinite !important;
+}
+
+/* 虹色モード時の説明タイトルの色も合わせる */
+.rainbow-mode .desc-title {
+    animation: rainbow-anim 3s linear infinite !important;
+}
+
+/* 虹色ボタンの見た目 */
+.color.rainbow {
+    background: linear-gradient(45deg, red, orange, yellow, lime, cyan, blue, magenta);
+}
+
+.desc-title {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.desc-text {
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+/* 色変更 */
+.colors {
+    margin-top: 10px;
+}
+
+.color {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+/* ページ */
+.page { display: none; }
+.page.active { display: block; }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- タブ -->
+    <div class="tabs">
+        <div class="tab active" onclick="openTab('client', this)">Client</div>
+        <div class="tab" onclick="openTab('main', this)">MainMenu</div>
+        <div class="tab" onclick="openTab('itemenu', this)">ItemMenu</div>
+        <div class="tab" onclick="openTab('misc', this)">Misc</div>
+        <div class="tab" onclick="openTab('render', this)">Render</div>
+        <div class="tab" onclick="openTab('items', this)">Items</div>
+        <div class="tab" onclick="openTab('addtag', this)">AddTag</div>
+        <div class="tab" onclick="openTab('movement', this)">Movement</div>
+        <div class="tab" onclick="openTab('world', this)">Server</div>
+        <div class="tab" onclick="openTab('fix', this)">Fix</div>
+    </div>
+
+    <!-- Client -->
+    <div id="client" class="page active">
+            <!-- <div><h1 style="color: #00ffff;">サイト限定、クライアントの説明専用部分</h1></div> -->
+            <div><h2>クライアントの詳細専用サイト</h2><h3>起動時について</h3></div>
+            <div><h5>Ver1.2.0から認証式になったよ。</h5></div>
+            <div><h5>クリエイティブメニューが改変されているよ。</h5></div>
+            <div><h5>サイトはそのまま見れるけど、WiiU側でタブを2回押したら2ページ目に行けるよ。</h5></div>
+            <div><h5>自動再起動がついてるよ。</h5></div>
+            <div><h5>ニンテンドーって表示されてるところがほとんどプレテンドーに変更されているよ。</h5></div>
+            <div><h5>種類が違うWiiU本体でも全て共通でバグはないよ。</h5></div>
+        </div>
+
+    <!-- Main -->
+    <div id="main" class="page">
+        <div class="grid">
+            <div class="module" data-desc="アイテムの詳細表示">DebugText</div>
+            <div class="module" data-desc="マイクをミュート">MicMute</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="ゲームメニューに戻る">ToMenu</div>
+            <div class="module" data-desc="ログをクリア">ClearLog</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="本体を再起動">Restart</div>
+            <div class="module" data-desc="本体の電源を消す">Shutdown</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div><h5> - 2page</h5></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="WiiU内でテトリスができる。">Tetris</div>
+            <div class="module" data-desc="操作するロゴを骨に代わります。・ロゴがある場合にだけ追加されてます。">Bone</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+        </div>
+
+        <div class="colors">
+            UI Theme Color:
+            <div class="color" style="background:red" onclick="setColor('red')"></div>
+            <div class="color" style="background:lime" onclick="setColor('lime')"></div>
+            <div class="color" style="background:blue" onclick="setColor('blue')"></div>
+            <div class="color" style="background:yellow" onclick="setColor('yellow')"></div>
+            <div class="color" style="background:cyan" onclick="setColor('cyan')"></div>
+            <div class="color" style="background:purple" onclick="setColor('purple')"></div>
+            <div class="color" style="background:white" onclick="setColor('white')"></div>
+            <div class="color" style="background:black" onclick="setColor('black')"></div>
+            <div class="color" style="background:orange" onclick="setColor('orange')"></div>
+            <div class="color rainbow" onclick="setColor('rainbow')"></div>
+        </div>
+        <h5 style="color: #00ffff;">CinoClient Ver1.2.0　　　　　　　　Discord : nayu_hime</h5>
+    </div>
+
+    <!-- Item -->
+    <div id="itemenu" class="page">
+        <div class="grid">
+            <div class="module" data-desc="[材料タブ]: 普通は出せないアイテム一覧">HackItem</div>
+            <div class="module" data-desc="[武器タブ]: 自作モッドメニュー">CinoMenu</div>
+            <div class="module" data-desc="[武器タブ]: 耐久付与">Unbreak</div>
+            <div class="module" data-desc="[材料タブ]: ポーションメニュー・レベルを変更できる。[操作]・十字キー下+LR">PotionMenu</div>
+            <div class="module" data-desc="[武器タブ]: ・花火・名札・スポーンエッグ・看板・ステータス一覧の本・カスタムドロップ増加&ワンパン剣・カスタム激流トライデント・全エンチャント本(合成用&元用)・バグアイテム・色付き花瓶">CustomItem</div>
+            <div class="module" data-desc="[材料タブ]: カスタムポーション">Potion</div>
+            <div class="module" data-desc="[武器タブ]: スピードが付与された足が速くなるブーツ(履くと付与される)">SpeedBoots</div>
+            <div class="module" data-desc="[武器タブ]: スピードが付与された足が遅くなるブーツ(履くと付与される)">SlowBoots</div>
+            <div class="module" data-desc="[材料タブ]: 宝箱のルートテーブル">Chest</div>
+            <div class="module" data-desc="[その他タブ]: ロックされたシュルカーボックス(シュルカーボックスの横に鍵を置いてます)">LockShulker</div>
+            <div class="module" data-desc="[材料タブ]: さまざまなスポナー">Spawner</div>
+            <div class="module" data-desc="[武器タブ]: モブではないスポナー">NotionSpawner</div>
+            <div class="module" data-desc="[武器タブ]: (代表的な)10色の防具と地図">ArmorColor</div>
+            <div class="module" data-desc="[武器タブ]: 旗でさまざまな世界の国旗">CountryFlag</div>
+            <div class="module" data-desc="[材料タブ]: 元素記号が見れます。">Element</div>
+            <div class="module" data-desc="[材料タブ]: エッグウォーズの村人スポナー(16色)">EggWars</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="[飾りタブ]: 元のアイテム戻す">Re:Decoration</div>
+            <div class="module" data-desc="[材料タブ]: 元のアイテム戻す">Re:Material</div>
+        </div>
+    </div>
+    
+    <!-- Misc -->
+    <div id="misc" class="page">
+        <div class="grid">
+            <div class="module" data-desc="泳げなくなる">AntiSwim</div>
+            <div class="module" data-desc="水の抵抗を受けなくなる。">AntiWater</div>
+            <div class="module" data-desc="CSMの表示を無効化">AntiCSM</div>
+            <div class="module" data-desc="かぼちゃを被った時の表示を無効化">AntiPumpkin</div>
+            <div class="module" data-desc="釣り竿の表示を無効化">AntiFishing</div>
+            <div class="module" data-desc="CSMを正常に表示">LoadCSM</div>
+            <div class="module" data-desc="液体の上に乗れる。">LiquidBlock</div>
+            <div class="module" data-desc="画面が揺れない">NoShake</div>
+            <div class="module" data-desc="弓を構えたとき、地図が消えるのを無効化">BowNoMap</div>
+            <div class="module" data-desc="額縁の枠の表示を無効化">PictureNoframe</div>
+            <div class="module" data-desc="地図に書いてる座標を非表示">MapNoCords</div>
+            <div class="module" data-desc="追加コンテンツ解放">UnlockDLC</div>
+            <div class="module" data-desc="クールダウン無効化">NoCooldown</div>
+            <div class="module" data-desc="投げ物を連射できます。">PacketCooldown</div>
+            <div class="module" data-desc="ポータル入るときのぐにゃぐにゃを無効化します。">PotalNoCooldown</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="クリティカルエフェクトが焔仕様に">BlazeEffect</div>
+            <div class="module" data-desc="スノーボールのエフェクトがハート仕様に">SnowballEffect</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="ミニゲームでもポーションが飲めます。">Drinkable</div>
+            <div class="module" data-desc="フレンドのフレンドの許可を無効化">FriendOfBypass</div>
+            <div class="" data-desc=""></div>
+            <div class="" data-desc=""></div>
+            <div><h5> - 2page</h5></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="目の前のプレイヤーのスキンをコピー">SkinCopy</div>
+            <div class="module" data-desc="目の前のプレイヤーのマントをコピー">CapeCopy</div>
+            <div class="module" data-desc="マント一覧を表示 [ Select Cape ]・None・Red Creeper・Pickaxe・Piston・Iron Golem・Enderman・Black・Red Devil・Black & Red・Evil Wizard・White">CapeList</div>
+        </div>
+    </div>
+    
+    <!-- Render -->
+    <div id="render" class="page">
+        <div class="grid">
+            <div class="module" data-desc="当たり判定を表示">HitBox</div>
+            <div class="module" data-desc="ネームタグを表示">NameTag</div>
+            <div class="module" data-desc="画面を明るくする">FullBright</div>
+            <div class="module" data-desc="防具を表示">ArmorHUD</div>
+            <div class="module" data-desc="真ん中の視点に丸いピンクが描画されます。エンティティが合うと赤色に変更されます。">Reticle</div>
+            <div class="module" data-desc="プレイヤーにHPを表示します。NameTagと一緒にONにすると適応されます。">ShowHealth</div>
+            <div class="module" data-desc="アイテムをぺらぺらに">ItemPhysics</div>
+            <div class="module" data-desc="フォントを変更する">BetterFont</div>
+            <div class="module" data-desc="バリアブロックが見える。">ShowBarrier</div>
+            <div class="module" data-desc="腕を振らない">NoArm</div>
+            <div class="module" data-desc="トーテムのアニメーションを無効化">NoTotemAnim</div>
+            <div class="module" data-desc="雨や雷の表示を無効化">NoRain</div>
+            <div class="module" data-desc="FPSを表示">ShowFPS</div>
+            <div class="module" data-desc="CPSを表示">ShowCPS</div>
+            <div class="module" data-desc="座標を表示">Coords</div>
+            <div class="module" data-desc="経験値の量を表示">ShowExp</div>
+            <div class="module" data-desc="現在のディメンションを表示">ShowDimension</div>
+            <div class="module" data-desc="調整可能なズームを搭載(説明通知が表示されます)">Zoom</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div><h5> - 2page</h5></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="[HitBox:ON]→当たり判定の色がモジュールと同じになります">Color:HitBox</div>
+            <div class="module" data-desc="[NameTag:ON]→ネームタグの色がモジュールと同じになります">Color:NameTag</div>
+            <div class="module" data-desc="[HitBox:ON]→目線の先の色がモジュールと同じになります">Color:ESP</div>
+            <div class="module" data-desc="釣り糸の色がモジュールと同じになります">Color:Fishing</div>
+            <div class="module" data-desc="経験値の色がモジュールと同じになります">Color:EXP</div>
+            <div class="module" data-desc="アイテムの文字の色がモジュールと同じになります">Color:Text</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="チェストの枠に色が付きます。">ChestESP</div>
+            <div class="module" data-desc="空に画像を反映します。・昼:[day.png]・夕方:[sun.png]・夜:[night.png]">CustomSky</div>
+        </div>
+    </div>
+
+    <!-- Items -->
+    <div id="items" class="page">
+        <div class="grid">
+            <div class="module" data-desc="左手にある食べ物を自動で食べてくれます。">AutoEat</div>
+            <div class="module" data-desc="左手にある上位金リンゴを補充しながら自動で食べてくれます(弓を持ってると無効化)。">AutoGapple</div>
+            <div class="module" data-desc="Lで一括取得">ChestStealer</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="いつでもクラフト">CraftEverything</div>
+            <div class="module" data-desc="いつでも3x3クラフト">CraftNoTable</div>
+            <div class="module" data-desc="高速クラフト[操作方法]・X+A">FastCraft</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="左手にアイテムを転送(説明通知が表示されます)">SwapOffHand</div>
+            <div class="module" data-desc="2個以上のアイテムを一括で捨てることが可能">DropStack</div>
+            <div class="module" data-desc="弓をマックスで連射できる">MaxBow</div>
+            <div class="module" data-desc="弓系のモジュールでインベントリーホットバーのどこかにある場合、弓を持たずに実行できる。">NoBow</div>
+            <div class="module" data-desc="上位の金リンゴを検出">GappleDetector</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div><h5> - 2page</h5></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="持ち物欄のアイテムをクリア">InventoryClean</div>
+            <div class="module" data-desc="虹色防具">RainbowArmor</div>
+            <div class="module" data-desc="アニメーションバナー[ AnimBanner ]・Rotate | Cross | Corners | Icons | Half・Red | Blue | Green | YYellow | Orange | Cyan">AnimBanner</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="手に持ってるアイテムを頭にコピーしてくれます。">HandHead</div>
+            <div class="module" data-desc="手に持ってるアイテムのダメージ値をループして頭にコピーできるようになりました。">LoopHead</div>
+            <div class="module" data-desc="手に持ってるアイテムを[飾りタブ]へコピーしてくれます。・ZLボタンを押しながらモジュールをONにすることで、十字キー上&ZLボタンでアイテムをコピーできます。">ItemCopy</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="手に持ってるアイテムを64個にしてくれます。">ItemStack</div>
+            <div class="module" data-desc="手持ち欄のアイテムを全て64個にしてくれます。">HotBarStack</div>
+        </div>
+    </div>
+
+    <!-- AddTag -->
+    <div id="addtag" class="page">
+        <div class="grid">
+            <div class="module" data-desc="手に持ってるアイテムに耐久を付与できる。">Unbreakble</div>
+            <div class="module" data-desc="手に持ってるアイテムの耐久を削除できる。">NoUnbreakble</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="手に持ってるアイテムのタグを消去">DisableTag</div>
+            <div class="module" data-desc="手に持ってるアイテムの詳細を隠してくれます。">HideFlag</div>
+            <div class="module" data-desc="手に持ってるアイテムの隠してる詳細を消去してくれます。">DisableFlag</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="手に持ってるアイテムのレベルコストを初期値にしてくれます。">CostReset</div>
+            <div class="module" data-desc="手に持ってるアイテムに金床編集を無効化するタグを付与します。">CostError</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="手に持ってるシュルカーボックスの中身を全て64個にしてくれます。">ShulkerCounter</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="手に持ってるアイテムにエンチャント効果を付与できる。[操作方法]・十字キー下&LR:エンチャント選択・十字キー左&LR:レベル選択・十字キー上&ZL:実行・十字キー左&ZR:レベルマックス・ZR&R:すべてリセット">Enchant</div>
+            <div class="module" data-desc="手に持ってるアイテムにステータス効果を付与できる。[操作方法]・UIが出ます。">Attribute</div>
+            <div class="module" data-desc="手に持ってるアイテムにポーション効果を付与できる。[操作方法]・十字キー下&LR:ポーション効果選択・十字キー左&LR:時間設定・十字キー右&LR:レベル選択・十字キー上&ZL:実行・十字キー右&ZR:タイプ変更・十字キー左&ZR:時間マックス・ZR&R:全てリセット">Potion</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="改造村人が作成できます。[詳細]・1番左スロット:交換アイテム1・2番左スロット:交換アイテム2・3番左スロット:販売アイテム [操作方法]・十字キー上&ZR:交易追加・十字キー上&ZL:スポナー召喚・ZR&R:リセット">TradeGen</div>
+            <div class="module" data-desc="持ってる改造村人のスポナーアイテムから職業を変更できます。・UI表示付き">Occupation</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="持ってるスポーンエッグをスポナー化できます。">AddSpawner</div>
+            <div class="module" data-desc="手に持ってるカスタムスポナーにNoAIが付きます。">NoAI</div>
+            <div class="module" data-desc="手に持ってるカスタムスポナーにNoAIが解除されます。">DeletedAI</div>
+            <div class="" data-desc=""></div>
+            <div class="" data-desc=""></div>
+
+        </div>
+    </div>
+
+    <!-- Movement -->
+    <div id="movement" class="page">
+        <div class="grid">
+            <div class="module" data-desc="飛べます。">Fly</div>
+            <div class="module" data-desc="うさぎジャンプができます。">BunnyHop</div>
+            <div class="module" data-desc="ノックバックしなくなります。">AntiKB</div>
+            <div class="module" data-desc="エアーホップと落下無効">AirJump</div>
+            <div class="module" data-desc="移動するスピードが速くなります。">Speed</div>
+            <div class="module" data-desc="泳ぐスピードが速くなります。">SwimSpeed</div>
+            <div class="module" data-desc="走るスピードが速くなります。">DashSpeed</div>
+            <div class="module" data-desc="10マスの壁の上に登れる。">Step</div>
+            <div class="module" data-desc="蜘蛛の巣を無効化できます。">NoWeb</div>
+            <div class="module" data-desc="アイテム使用時や空腹時でも走れます。">NoSlow</div>
+            <div class="module" data-desc="インベントリーを開きながら移動することができます。">InvenWalk</div>
+            <div class="module" data-desc="視点が低くなり、1マスの穴も通れます。">OneView</div>
+            <div class="module" data-desc="落下の衝撃がなくなります。[副作用]・解除時、落下死します。">NoFallDamage</div>
+            <div class="module" data-desc="ブロックの置ける距離が最大7マスに変更。">Block7Mass</div>
+            <div class="module" data-desc="水ないところでも泳げます。">WaterFly</div>
+            <div class="module" data-desc="ミニゲームで移動可能">MiniGameMove</div>
+            <div class="module" data-desc="視点先のブロックにテレポートできます。・十字キー左 & ZL">ClickTP</div>
+            <div class="module" data-desc="サバイバルでも早く掘れます。(岩盤も破壊可能)">FastBreak</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div><h5> - 2page</h5></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="高速でブロックなどを置けます。">FastPlace</div>
+            <div class="module" data-desc="高速でブロックを破壊、プレイヤーやモンスターを攻撃できます。">FastAction</div>
+            <div class="module" data-desc="ブロックを置く速度などが倍速になります。">WFastPlace</div>
+            <div class="module" data-desc="ブロックを破壊する速度などが倍速になります。">WFastAction</div>
+            <div class="module" data-desc="殴るボタンで激流発動します。">Torrent</div>
+            <div class="module" data-desc="激流(Torrent)発動時限定、移動できる制限を解除できます。">T-NoMove</div>
+            <div class="module" data-desc="アタックリーチを7マスに伸びます。">Attack7Mass</div>
+            <div class="module" data-desc="プレイヤーやモンスターを超高速で攻撃ができます。・自分のワールドなら超高速で連打できます。">FastAttack</div>
+            <div class="module" data-desc="常時クリティカル状態になります。">Critical</div>
+        </div>
+    </div>
+
+    <!-- Server -->
+    <div id="world" class="page">
+        <div class="grid">
+            <div class="module" data-desc="追放されなくなります。">AntiKick</div>
+            <div class="module" data-desc="相手からのコマンド操作を無効化します。">AntiCommand</div>
+            <div class="module" data-desc="NNIDを変更することができます。">ChangeNNID</div>
+            <div class="module" data-desc="リスポーン画面をスキップします。">AutoRespawn</div>
+            <div class="module" data-desc="看板の編集ができます。">SignEditor</div>
+            <div class="module" data-desc="ワールドエディットが使えます。[操作方法]・十字キー下+LR: 範囲変更・十字キー下+ZR: 2回で設定できます。・十字キー下+ZL: 実行">WorldEdit</div>
+            <div class="module" data-desc="ブロックがある地面までブロックを置けます。[操作方法]・ZLボタン">DownFill</div>
+            <div class="module" data-desc="視点先のブロックから手元範囲内にブロックを置けます。[操作方法]・モジュールを押す">ViewFill</div>
+            
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="[OP権限]downfallというメッセージが出るだけです。(他人反映)">DownFall</div>
+            <div class="module" data-desc="[OP権限]自身をキルします。">Kill</div>
+            <div class="module" data-desc="[OP権限]時間を変更できます。・ZRボタンで+10ずつ追加できます。">Time</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="[OP権限]天候を変更できます。・晴れ">Weat: Clear</div>
+            <div class="module" data-desc="[OP権限]天候を変更できます。・雨">Weat: Rain</div>
+            <div class="module" data-desc="[OP権限]天候を変更できます。・雷">Weat: Thunder</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="[OP権限]ワールドの難易度を変更できます。・ピースフル">Dif: Peaceful</div>
+            <div class="module" data-desc="[OP権限]ワールドの難易度を変更できます。・イージー">Dif: Easy</div>
+            <div class="module" data-desc="[OP権限]ワールドの難易度を変更できます。・ノーマル">Dif: Normal</div>
+            <div class="module" data-desc="[OP権限]ワールドの難易度を変更できます。・ハード">Dif: Hard</div>
+            <div><h5> - 2page</h5></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="自分のワールド限定、投げるポーションの効果を無効化します。">AntiSplashPotion</div>
+            <div class="module" data-desc="自分のワールド限定、爆発を無効化します。">AntiExploit</div>
+            <div class="module" data-desc="自分のワールド限定、金リンゴの効果を無効化します。">AntiGoldenApple</div>
+            <div class="" data-desc=""></div>
+            <div class="module" data-desc="自分のワールド限定、クリーパーの爆発範囲を最大にします。">ExploitCreeper</div>
+            <div class="module" data-desc="自分のワールド限定、クリーパーの爆発速度を最速にします。">QuickCreeper</div>
+            <div class="" data-desc=""></div>
+            <div class="" data-desc=""></div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="自分のワールド限定、ビーコンや旗などの配置制限のあるブロックの上限を解放します。">BlockEntityLimited</div>
+            <div class="module" data-desc="自分のワールド限定、動物やモンスター、プレイヤー以外の生物などの上限を解放します。">MobLimited</div>
+            <div class="module" data-desc="自分のワールド限定、生物を殴るとその生物の上に乗ることができます。">EntityRide</div>
+            <div class="module" data-desc="自分のワールド限定、全員の落下ダメージを無効化します。">APNoFallDamage</div>
+            <div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div><div class="" data-desc=""></div>
+            <div class="module" data-desc="自分のワールド限定、エンチャントテーブルから束縛の呪いを追加します。">BindingCurse</div>
+            <div class="module" data-desc="自分のワールド限定、エンチャントテーブルから消滅の呪いを追加します。">VanishingCurse</div>
+        </div>
+    </div>
+    
+    <!-- Fix -->
+    <div id="fix" class="page">
+        <div class="grid">
+            <div class="module" data-desc="テクスチャ変更するロード画面をスキップしてデフォルトテクスチャに変更します。">AntiTexture</div>
+            <div class="module" data-desc="エンチャントレベルやポーションレベル、ポーションの時間を正規化します。">LevelNorm</div>
+            <div class="module" data-desc="ネットワークエラーを無効化します。">NetworkProtect</div>
+            <div class="module" data-desc="スプラッシュポーションを1つずつ処理できるようになります。">SplashPotion</div>
+            <div class="module" data-desc="クラッシュするチェストスティーラーを無効化します。">AntiStealer</div>
+            <div class="module" data-desc="持ち物欄に存在しないアイテムがコード以外で追加された場合、そのアイテムを無効化します。">AntiInventory</div>
+            <div class="module" data-desc="テクスチャが存在しない魚のクラッシュを無効化します。">AntiFish</div>
+            <div class="module" data-desc="テクスチャが存在しないスカルヘッドのクラッシュを無効化します。">AntiSkull</div>
+            <div class="module" data-desc="ピストンドアでクラッシュする問題を無効化します。">AntiDoor</div>
+            <div class="module" data-desc="Y座標最大に発射装置からシュルカーボックスを置かれた時、クラッシュする問題を無効化します。">AntiDispenser</div>
+            <div class="module" data-desc="スポナーからエンティティの召喚を有効化します。">AntiSpawner</div>
+            <div class="module" data-desc="全効果の付与された矢が自身に当たった時のクラッシュを無効化します。">AntiArrow</div>
+            <div class="module" data-desc="マイナス位置や例外場所にテレポートされた時にクラッシュする問題を無効化します。">AntiTP</div>
+            <div class="module" data-desc="パケットでクラッシュを無効化します。">AntiCrashPacket</div>
+            <div class="module" data-desc="切断パケットを無効化します。">AntiKillerPacket</div>
+            <div class="module" data-desc="沈黙的なエラーを強制的に無効化します。">FixSilent</div>
+            <div class="module" data-desc="不正なエラーを無効化します。">AntiError</div>
+            <div class="" data-desc=""></div>
+        </div>
+    </div>
+
+    <!-- 🔽 説明表示 -->
+    <div class="desc-box">
+        <div id="desc-title" class="desc-title">モジュールを選択</div>
+        <div id="desc-text" class="desc-text">ここに説明が表示されます</div>
+    </div>
+
+</div>
+
+<script>
+
+/* タブ */
+function openTab(id, el) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+
+    document.getElementById(id).classList.add("active");
+    el.classList.add("active");
+}
+
+/* 色変更 */
+function setColor(color) {
+    if (color === 'rainbow') {
+        document.documentElement.classList.add('rainbow-mode');
+    } else {
+        document.documentElement.classList.remove('rainbow-mode');
+        document.documentElement.style.setProperty('--theme-color', color);
+    }
+}
+
+/* モジュールクリック */
+document.querySelectorAll(".module").forEach(m => {
+    m.onclick = () => {
+
+        // 選択状態リセット
+        document.querySelectorAll(".module").forEach(x => x.classList.remove("selected"));
+
+        // 選択
+        m.classList.add("selected");
+
+        // 下に表示
+        document.getElementById("desc-title").innerText = m.innerText;
+        // '[' や '|' の前に改行を挿入し、先頭の余分な改行を trim() で削除します
+        const desc = m.dataset.desc || "";
+        document.getElementById("desc-text").innerText = desc.replace(/[\[・]/g, '\n$&').trim();
+    };
+});
+
+</script>
+
+</body>
+</html>

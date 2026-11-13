@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<!-- <title>WiiU/C++ NBT Builder</title> -->
+
+<style>
+body{font-family:sans-serif;background:#f5fbff;margin:20px}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.row{display:flex;gap:8px;align-items:center;margin:6px 0}
+input,select,button,textarea{border-radius:12px;border:1px solid #aaa;padding:6px 10px}
+button{background:#dff3ff;cursor:pointer}
+button.delete{background:#ffdede;border-color:#f99}
+.item{border:2px solid #cce;border-radius:16px;padding:12px;margin:10px 0}
+.editor{background:#eef;border-radius:12px;padding:8px;margin-top:6px}
+.ench-row{display:flex;justify-content:space-between;align-items:center;background:#dde;border-radius:10px;padding:4px 8px;margin:4px 0}
+textarea{width:100%;height:200px}
+</style>
+</head>
+
+<body>
+
+<h1>WiiU/C++ NBT Builder</h1>
+
+<div class="card">
+<label><input type="radio" name="mode" value="menu" checked> クリエイティブメニュー</label>
+<label><input type="radio" name="mode" value="hand"> 手元 / スロット</label>
+</div>
+
+<div id="menuPanel" class="card">
+<select id="menuCat">
+<option value="BuildingBlocks">建築ブロック</option>
+<option value="Decorations">装飾</option>
+<option value="Redstone">レッドストーン</option>
+<option value="Transportation">乗り物</option>
+<option value="Materials">材料</option>
+<option value="Food">食料</option>
+<option value="Tools_Wepons_and_Armor">道具・武器・防具</option>
+<option value="Brewing">ポーション</option>
+<option value="Brewing_1">ポーション ( 短い時間 )</option>
+<option value="Brewing_2">ポーション ( 長い時間 )</option>
+<option value="Brewing_3">ポーション ( レベル2 )</option>
+<option value="Miscellaneous">その他</option>
+</select>
+</div>
+
+<div id="handPanel" class="card" style="display:none;">
+
+ <div class="row">
+  <label><input type="radio" name="handType" value="0" checked> 手元</label>
+  <label><input type="radio" name="handType" value="1"> 一番手前</label>
+ </div>
+
+</div>
+
+
+<button onclick="addItem()">+ アイテム追加</button>
+<div id="items"></div>
+
+<div class="card">
+<h2>出力</h2>
+<textarea id="output"></textarea>
+<button onclick="copyOut()">コピー</button>
+</div>
+
+<script>
+/* ===================== 定数 ===================== */
+
+const enchantList=[
+ ['Enchantments_Protection','防護'],
+ ['Enchantments_FireProtection','防火'],
+ ['Enchantments_FeatherFalling','落下軽減'],
+ ['Enchantments_BlastProtection','爆発耐性'],
+ ['Enchantments_ProjectileProtection','間接攻撃耐性'],
+ ['Enchantments_Respiration','水中呼吸'],
+ ['Enchantments_AquaAffinity','水中作業'],
+ ['Enchantments_Thorns','とげ'],
+ ['Enchantments_DepthStrider','水中移動'],
+ ['Enchantments_FrostWalker','氷渡り'],
+ ['Enchantments_Curse_of_Binding','束縛の呪い'],
+ ['Enchantments_Sharpness','鋭さ'],
+ ['Enchantments_Smite','聖なる力'],
+ ['Enchantments_Bane_of_Arthropods','虫殺し'],
+ ['Enchantments_Knockback','ノックバック'],
+ ['Enchantments_FireAspect','火属性'],
+ ['Enchantments_Looting','アイテムボーナス'],
+ ['Enchantments_Efficiency','効率'],
+ ['Enchantments_SilkTouch','シルクタッチ'],
+ ['Enchantments_Unbreaking','耐久力'],
+ ['Enchantments_Fortune','幸運'],
+ ['Enchantments_Power','射撃ダメージ'],
+ ['Enchantments_Punch','衝撃'],
+ ['Enchantments_Flame','火炎'],
+ ['Enchantments_Infinity','無限'],
+ ['Enchantments_Luck_of_the_Sea','宝釣り'],
+ ['Enchantments_Lure','入れ食い'],
+ ['Enchantments_Mending','修繕'],
+ ['Enchantments_Curse_of_Vanishing','消滅の呪い'],
+ ['Enchantments_Impaling','串刺し'],
+ ['Enchantments_Riptide','激流'],
+ ['Enchantments_Loyalty','忠誠心'],
+ ['Enchantments_Channeling','チャネリング']
+];
+
+const attributeList=[
+['AttributeModifiers_MaxHealth','最大HP'],
+['AttributeModifiers_MobFollowRange','モブの追跡範囲'],
+['AttributeModifiers_Knockbackresistance','ノックバック耐性'],
+['AttributeModifiers_Speed','スピード'],
+['AttributeModifiers_AttackDamage','攻撃力'],
+['AttributeModifiers_HorseJumpStrength','馬の跳躍力'],
+['AttributeModifiers_ZombieReinforcements','ゾンビの増援'],
+['AttributeModifiers_AttackSpeed','攻撃速度'],
+['AttributeModifiers_Armor','防具'],
+['AttributeModifiers_ArmorUnbreakble','防具の耐久力'],
+['AttributeModifiers_Lucky','幸運'],
+['AttributeModifiers_Suuji','数字'],
+['AttributeModifiers_Place','置く'],
+['AttributeModifiers_Take','取る'],
+['AttributeModifiers_Take_Place','取る/置く'],
+['AttributeModifiers_ChangePose','ポーズを変更'],
+['AttributeModifiers_Error','エラー'],
+['AttributeModifiers_Bed_White','ベッド 白色'],
+['AttributeModifiers_Bed_Orange','ベッド オレンジ色'],
+['AttributeModifiers_Bed_Magenta','ベッド 赤紫'],
+['AttributeModifiers_Bed_LightBlue','ベッド 空色'],
+['AttributeModifiers_Bed_Yellow','ベッド 黄色'],
+['AttributeModifiers_Bed_Lime','ベッド 黄緑'],
+['AttributeModifiers_Bed_Pink','ベッド ピンク'],
+['AttributeModifiers_Bed_Gray','ベッド 灰色'],
+['AttributeModifiers_Bed_LightGray','ベッド 薄灰色'],
+['AttributeModifiers_Bed_Cyan','ベッド 水色'],
+['AttributeModifiers_Bed_Purple','ベッド 紫色'],
+['AttributeModifiers_Bed_Blue','ベッド 青色'],
+['AttributeModifiers_Bed_Brown','ベッド 茶色'],
+['AttributeModifiers_Bed_Green','ベッド 緑色'],
+['AttributeModifiers_Bed_Red','ベッド 赤色'],
+['AttributeModifiers_Bed_Black','ベッド 黒色'],
+['Fake_AttributeModifiers_MaxHealth','偽物 : 最大HP'],
+['Fake_AttributeModifiers_MobFollowRange','偽物 : モブの追跡範囲'],
+['Fake_AttributeModifiers_Knockbackresistance','偽物 : ノックバック耐性'],
+['Fake_AttributeModifiers_Speed','偽物 : スピード'],
+['Fake_AttributeModifiers_AttackDamage','偽物 : 攻撃力'],
+['Fake_AttributeModifiers_HorseJumpStrength','偽物 : 馬の跳躍力'],
+['Fake_AttributeModifiers_ZombieReinforcements','偽物 : ゾンビの増援'],
+['Fake_AttributeModifiers_AttackSpeed','偽物 : 攻撃速度'],
+['Fake_AttributeModifiers_Armor','偽物 : 防具'],
+['Fake_AttributeModifiers_ArmorUnbreakble','偽物 : 防具の耐久力'],
+['Fake_AttributeModifiers_Lucky','偽物 : 幸運']
+];
+
+const opeList=[
+ ['Attribute_Operation_Default','デフォルト:0'],
+ ['Attribute_Operation_Percent','パーセント:1']
+];
+
+
+/* ===================== データ ===================== */
+
+let items=[];
+
+/* ===================== 基本 ===================== */
+
+function addItem(){
+ items.push({
+  pos:0,id:0,count:1,damage:0,
+  enchants:[],
+  attributes:[],
+  potions:[],
+  name:"",
+  colors:[],
+  unbreakable:false,
+  hideFlags:[]
+ });
+ render();update();
+}
+
+function closeEditors(){
+ document.querySelectorAll('.editor').forEach(e=>e.remove());
+}
+
+/* ===================== UI描画 ===================== */
+
+function render(){
+ const root=document.getElementById('items');
+ root.innerHTML='';
+ items.forEach((it,idx)=>{
+  const box=document.createElement('div');
+  box.className='item';
+  box.innerHTML=`
+   <div class="row">
+    pos <input type=number value=${it.pos} onchange="items[${idx}].pos=this.value;update()">
+    id <input type=number value=${it.id} onchange="items[${idx}].id=this.value;update()">
+    count <input type=number value=${it.count} onchange="items[${idx}].count=this.value;update()">
+    dmg <input type=number value=${it.damage} onchange="items[${idx}].damage=this.value;update()">
+    <button class=delete onclick="items.splice(${idx},1);render();update()">削除</button>
+   </div>
+
+   <div class="row">
+    <button onclick="openUnbreakable(${idx})">Unbreakable</button>
+    <button onclick="openEnchant(${idx})">Enchant</button>
+    <button onclick="openAttribute(${idx})">Attribute</button>
+    <button onclick="openPotion(${idx})">Potion</button>
+    <button onclick="openName(${idx})">Name</button>
+    <button onclick="openColor(${idx})">Color</button>
+    <button onclick="openFlags(${idx})">Flags</button>
+   </div>
+
+   <div class="elist"></div>
+  `;
+  root.appendChild(box);
+  renderLists(it,box);
+ });
+}
+
+function renderLists(it,box){
+ const el=box.querySelector('.elist');
+ el.innerHTML='';
+
+ it.enchants.forEach((e,i)=>{
+  const d=document.createElement('div');
+  d.className='ench-row';
+  d.textContent=`${e.id} Lv${e.lv}`;
+  const b=document.createElement('button');
+  b.textContent='×';b.className='delete';
+  b.onclick=()=>{it.enchants.splice(i,1);render();update()};
+  d.appendChild(b);el.appendChild(d);
+ });
+
+ it.attributes.forEach((a,i)=>{
+  const d=document.createElement('div');
+  d.className='ench-row';
+ 
+  let text = `${a.id} / ${a.operation} / ${a.amount}`;
+ 
+  if(a.slot && a.slot !== ""){
+   text += ` / Slot: ${a.slot}`;
+  }
+ 
+  d.textContent = text;
+ 
+  const b=document.createElement('button');
+  b.textContent='×';
+  b.className='delete';
+  b.onclick=()=>{
+   it.attributes.splice(i,1);
+   render();
+   update();
+  };
+ 
+  d.appendChild(b);
+  el.appendChild(d);
+ });
+
+ it.potions.forEach((p,i)=>{
+  const d=document.createElement('div');
+  d.className='ench-row';
+  d.textContent=`Potion ${p.id} Lv${p.ampl} Time:${p.time}`;
+  const b=document.createElement('button');
+  b.textContent='×';b.className='delete';
+  b.onclick=()=>{it.potions.splice(i,1);render();update()};
+  d.appendChild(b);el.appendChild(d);
+ });
+
+ if(it.name){
+  const d=document.createElement('div');
+  d.className='ench-row';
+  d.textContent=`Name: ${it.name}`;
+ 
+  const b=document.createElement('button');
+  b.textContent='×';
+  b.className='delete';
+  b.onclick=()=>{
+   it.name="";
+   render();
+   update();
+  };
+ 
+  d.appendChild(b);
+  el.appendChild(d);
+ }
+ 
+ if(it.colors){
+  it.colors.forEach((c,index)=>{
+   const d=document.createElement('div');
+   d.className='ench-row';
+   d.textContent=`${c.type} : ${c.color}`;
+ 
+   const b=document.createElement('button');
+   b.textContent='×';
+   b.className='delete';
+   b.onclick=()=>{
+    it.colors.splice(index,1);
+    render();
+    update();
+   };
+ 
+   d.appendChild(b);
+   el.appendChild(d);
+  });
+ }
+ // ----- Unbreakable -----
+  if(it.unbreakable){
+   const d=document.createElement('div');
+   d.className='ench-row';
+   d.textContent='Unbreakable';
+  
+   const b=document.createElement('button');
+   b.textContent='×';
+   b.className='delete';
+   b.onclick=()=>{
+    it.unbreakable=false;
+    render();
+    update();
+   };
+  
+   d.appendChild(b);
+   el.appendChild(d);
+  }
+  
+  // ----- HideFlags -----
+  if(it.hideFlags.length){
+   let total=0;
+   it.hideFlags.forEach(v=>total+=v);
+  
+   const d=document.createElement('div');
+   d.className='ench-row';
+   d.textContent=`HideFlags: ${total}`;
+  
+   const b=document.createElement('button');
+   b.textContent='×';
+   b.className='delete';
+   b.onclick=()=>{
+    it.hideFlags=[];
+    render();
+    update();
+   };
+  
+   d.appendChild(b);
+   el.appendChild(d);
+  }
+  
+ 
+}
+
+/* ===================== Unbreakable ===================== */
+
+function openUnbreakable(i){
+ closeEditors();
+
+ const w=document.createElement('div');
+ w.className='editor';
+
+ const cb=document.createElement('input');
+ cb.type='checkbox';
+ cb.checked=items[i].unbreakable;
+
+ cb.onchange=()=>{
+  items[i].unbreakable=cb.checked;
+  update();
+ };
+
+ w.append("Unbreakable ",cb);
+ document.getElementById('items').children[i].appendChild(w);
+}
+
+/* ===================== Enchant ===================== */
+
+function openEnchant(i){
+ closeEditors();
+ const w=document.createElement('div');
+ w.className='editor';
+
+ const sel=document.createElement('select');
+ enchantList.forEach(e=>{
+  const o=document.createElement('option');
+  o.value=e[0];o.textContent=e[1];
+  sel.appendChild(o);
+ });
+
+ const lv=document.createElement('input');
+ lv.type='number';lv.value=0;
+
+ const btn=document.createElement('button');
+ btn.textContent='追加';
+ btn.onclick=()=>{
+  items[i].enchants.push({id:sel.value,lv:lv.value});
+  render();update();
+ };
+
+ w.append('Enchant ',sel,' Lv ',lv,btn);
+ document.getElementById('items').children[i].appendChild(w);
+}
+
+/* ===================== Attribute ===================== */
+
+function openAttribute(i){
+ closeEditors();
+ const w=document.createElement('div');
+ w.className='editor';
+
+ const idSel=document.createElement('select');
+ attributeList.forEach(a=>{
+  const o=document.createElement('option');
+  o.value=a[0];o.textContent=a[1];
+  idSel.appendChild(o);
+ });
+
+ const opeSel=document.createElement('select');
+ opeList.forEach(o=>{
+  const op=document.createElement('option');
+  op.value=o[0];op.textContent=o[1];
+  opeSel.appendChild(op);
+ });
+
+ const amount=document.createElement('input');
+ amount.placeholder='例: 0.1 / Infinity, Neg_Infinity, NaN';
+
+ // 特殊値ボタン
+ const infBtn=document.createElement('button');
+ infBtn.textContent='無限[∞]';
+ infBtn.onclick=()=>{
+  amount.value='Infinity';
+ };
+ 
+ const negInfBtn=document.createElement('button');
+ negInfBtn.textContent='逆無限[-∞]';
+ negInfBtn.onclick=()=>{
+  amount.value='Neg_Infinity';
+ };
+ 
+ const nanBtn=document.createElement('button');
+ nanBtn.textContent='NaN';
+ nanBtn.onclick=()=>{
+  amount.value='NaN';
+ };
+ 
+ const btn=document.createElement('button');
+ btn.textContent='追加';
+ btn.onclick=()=>{
+  items[i].attributes.push({
+   id:idSel.value,
+   operation:opeSel.value,
+   amount:amount.value,
+   slot:slotSel.value
+  });
+  render();update();
+ };
+
+ const slotSel=document.createElement('select');
+
+ const slotList=[
+  ["","なし"],
+  ["mainhand","右手"],
+  ["offhand","左手"],
+  ["head","帽子"],
+  ["chest","服"],
+  ["legs","パンツ"],
+  ["feet","足"]
+ ];
+ 
+ slotList.forEach(s=>{
+  const o=document.createElement('option');
+  o.value=s[0];
+  o.textContent=s[1];
+  slotSel.appendChild(o);
+ });
+
+ w.append(
+  'Id ',idSel,
+  ' Operation ',opeSel,
+  ' Amount ',amount,
+  infBtn,negInfBtn,nanBtn,
+  ' Slot ',slotSel,
+  btn
+ );
+
+ document.getElementById('items').children[i].appendChild(w);
+}
+
+/* ===================== Potion ===================== */
+
+function openPotion(i){
+ closeEditors();
+ const w=document.createElement('div');
+ w.className='editor';
+
+ const idSel=document.createElement('select');
+ idSel.innerHTML=`
+  <option value="1">スピード</option>
+  <option value="2">鈍化</option>
+  <option value="3">勤勉</option>
+  <option value="4">疲労</option>
+  <option value="5">力</option>
+  <option value="6">回復</option>
+  <option value="7">ダメージ</option>
+  <option value="8">跳躍</option>
+  <option value="9">目まい</option>
+  <option value="10">再生</option>
+  <option value="11">耐性</option>
+  <option value="12">耐火</option>
+  <option value="13">水中呼吸</option>
+  <option value="14">不可視</option>
+  <option value="15">目つぶし</option>
+  <option value="16">暗視</option>
+  <option value="17">空腹</option>
+  <option value="18">弱体化</option>
+  <option value="19">毒</option>
+  <option value="20">ウィザー</option>
+  <option value="21">体力増強</option>
+  <option value="22">吸収</option>
+  <option value="23">飽和</option>
+  <option value="24">発光</option>
+  <option value="25">浮遊</option>
+  <option value="26">幸運</option>
+  <option value="27">不幸</option>
+  <option value="28">コンジット</option>
+  <option value="29">低速落下</option>
+ `;
+
+ const ampl=document.createElement('input');
+ ampl.type='number';
+ ampl.min=-127;
+ ampl.max=127;
+ ampl.value=0;
+
+ const timeInput=document.createElement('input');
+ timeInput.type='number';
+ timeInput.min=-2147483647;
+ timeInput.max=2147483647;
+ timeInput.value=3600;
+
+ const timeMode=document.createElement('select');
+ timeMode.innerHTML=`
+  <option value="custom">数値指定</option>
+  <option value="max">最長時間</option>
+ `;
+
+ // ▼ ambi テキストボックス化
+ const ambiInput=document.createElement('input');
+ ambiInput.type='number';
+ ambiInput.min=0;
+ ambiInput.max=1;
+ ambiInput.value=0;
+
+ // ▼ showpa テキストボックス化
+ const showInput=document.createElement('input');
+ showInput.type='number';
+ showInput.min=0;
+ showInput.max=1;
+ showInput.value=1;
+
+ const btn=document.createElement('button');
+ btn.textContent='追加';
+
+ btn.onclick=()=>{
+  let time = timeMode.value==="max"
+    ? 2147483647
+    : timeInput.value;
+
+  items[i].potions.push({
+   id:idSel.value,
+   ampl:ampl.value,
+   time:time,
+   ambi:ambiInput.value,
+   showpa:showInput.value
+  });
+
+  render();
+  update();
+ };
+
+ w.append(
+  'Potion ',idSel,
+  ' Lv ',ampl,
+  ' Time ',timeMode,timeInput,
+  ' Ambi ',ambiInput,
+  ' 見た目の色 ',showInput,
+  btn
+ );
+
+ document.getElementById('items').children[i].appendChild(w);
+}
+
+/* ===================== Name ===================== */
+
+function openName(i){
+ closeEditors();
+
+ const w=document.createElement('div');
+ w.className='editor';
+
+ const input=document.createElement('input');
+ input.type='text';
+ input.value=items[i].name;
+
+ const btn=document.createElement('button');
+ btn.textContent='決定';
+
+ btn.onclick=()=>{
+  items[i].name=input.value;
+  render();
+  update();
+ };
+
+ w.append('CustomName ',input,btn);
+ document.getElementById('items').children[i].appendChild(w);
+}
+
+/* ===================== Color ===================== */
+
+function openColor(i){
+ closeEditors();
+ const w=document.createElement('div');
+ w.className='editor';
+
+ const typeSel=document.createElement('select');
+ typeSel.innerHTML=`
+  <option value="ArmorColor">防具</option>
+  <option value="MapColor">地図</option>
+  <option value="HorseColor">馬鎧</option>
+  <option value="PotionColor">ポーション</option>
+ `;
+
+ // HTML標準カラーピッカー
+ const colorPicker=document.createElement('input');
+ colorPicker.type='color';
+ colorPicker.value='#ff0000';
+
+ const btn=document.createElement('button');
+ btn.textContent='追加';
+
+ btn.onclick=()=>{
+  const hex=colorPicker.value;
+  const r=parseInt(hex.substr(1,2),16);
+  const g=parseInt(hex.substr(3,2),16);
+  const b=parseInt(hex.substr(5,2),16);
+
+  const colorInt=(r<<16)|(g<<8)|b;
+
+  items[i].colors.push({
+   type:typeSel.value,
+   color:colorInt
+  });
+
+  render();
+  update();
+ };
+
+ w.append('Type ',typeSel,' Color ',colorPicker,btn);
+ document.getElementById('items').children[i].appendChild(w);
+}
+
+/* ===================== Flag ===================== */
+
+function openFlags(i){
+ closeEditors();
+
+ const w=document.createElement('div');
+ w.className='editor';
+
+ const flagsData=[
+  ["Enchant / エンチャント",1],
+  ["Attribute / アトリビュート",2],
+  ["Unbreakable / 耐久",4],
+  ["CanDestroy / 破壊可能ブロック",8],
+  ["CanPlaceOn / 設置可能ブロック",16],
+  ["CustomPotionEffects / ポーション効果",32]
+ ];
+
+ const flagWrap=document.createElement('div');
+ const totalDisplay=document.createElement('span');
+ totalDisplay.style.marginLeft="10px";
+
+ function updateTotal(){
+  let total=0;
+  items[i].hideFlags.forEach(v=>total+=v);
+  totalDisplay.textContent=" 合計: "+total;
+  update();
+ }
+
+ flagsData.forEach(([name,val])=>{
+  const cb=document.createElement('input');
+  cb.type='checkbox';
+  cb.checked=items[i].hideFlags.includes(val);
+
+  cb.onchange=()=>{
+   if(cb.checked){
+    items[i].hideFlags.push(val);
+   }else{
+    items[i].hideFlags=
+      items[i].hideFlags.filter(v=>v!==val);
+   }
+   updateTotal();
+  };
+
+flagWrap.append(cb," ",name,document.createElement('br'));
+
+ });
+
+ updateTotal();
+
+ w.append("HideFlags",flagWrap,totalDisplay);
+ document.getElementById('items').children[i].appendChild(w);
+}
+
+/* ===================== Attribute Amount Formatter ===================== */
+
+function formatAttributeAmount(v){
+
+  // 空文字対策
+  if(v === "" || v === null || v === undefined){
+    return "0.0db";
+  }
+
+  // 特殊値
+  if(v === 'Infinity' || v === 'Neg_Infinity' || v === 'NaN'){
+    return v;
+  }
+
+  const n = Number(v);
+
+  if(!isNaN(n)){
+    if(String(v).includes('.')){
+      return `${v}db`;
+    }else{
+      return `${v}.0db`;
+    }
+  }
+
+  // 想定外入力は 0.0db にフォールバック
+  return "0.0db";
+}
+
+/* ===================== NBT生成 ===================== */
+
+function update(){
+ let out='';
+ const mode=document.querySelector('input[name="mode"]:checked').value;
+ const menuCat = document.getElementById("menuCat");
+
+ items.forEach((it,itemIndex)=>{
+
+  out+=`CompoundTag *tag${itemIndex} = newTag();\n`;
+
+
+  // ----- CustomName -----
+  if(it.name && it.name !== ""){
+   out+=`CompoundTag* displaytag${itemIndex} = newTag();\n`;
+   out+=`NBT::CustomName(tag${itemIndex},displaytag${itemIndex},"${it.name}"WSTR);\n`;
+  }
+  
+  // ----- Enchant -----
+  if(it.enchants.length){
+   out+=`ListTag *listtag${itemIndex} = newListTag();\n`;
+   it.enchants.forEach((e,i)=>{
+    out+=`CompoundTag *enchtag${itemIndex}_${i} = newTag();\n`;
+    out+=`NBT::Enchant(tag${itemIndex},listtag${itemIndex},enchtag${itemIndex}_${i},${e.id},${e.lv});\n`;
+   });
+  }
+
+  // ----- Attribute -----
+  if(it.attributes.length){
+   out+=`ListTag *AttributeModifiers${itemIndex} = newListTag();\n`;
+   it.attributes.forEach((a,i)=>{
+    out+=`CompoundTag *ability${itemIndex}_${i} = newTag();\n`;
+    const amt = formatAttributeAmount(a.amount);
+    out+=`NBT::Status(tag${itemIndex},AttributeModifiers${itemIndex},ability${itemIndex}_${i},${a.id}, ${a.operation}, ${amt});\n`;
+    if(a.slot && a.slot !== ""){
+     out+=`Slot::${a.slot}(ability${itemIndex}_${i});\n`;
+    }
+   });
+  }
+
+  // ----- Potion -----
+  if(it.potions.length){
+   out+=`ListTag* custompotioneffect${itemIndex} = newListTag();\n`;
+   it.potions.forEach((p,i)=>{
+    out+=`CompoundTag* potiontag${itemIndex}_${i} = newTag();\n`;
+    out+=`NBT::Default_Potion(tag${itemIndex},custompotioneffect${itemIndex},potiontag${itemIndex}_${i},${p.id},${p.ampl},${p.time},${p.ambi},${p.showpa});\n`;
+   });
+  }
+  // ----- Color -----
+  if(it.colors && it.colors.length){
+   it.colors.forEach((c,index)=>{
+  
+    if(c.type==="PotionColor"){
+     out+=`NBT::PotionColor(tag${itemIndex},${c.color});\n`;
+    }else{
+     out+=`CompoundTag* displaycolor${itemIndex}_${index} = newTag();\n`;
+     out+=`NBT::${c.type}(tag${itemIndex},displaycolor${itemIndex}_${index},${c.color});\n`;
+    }
+   });
+  }
+  // ----- Unbreakable -----
+  if(it.unbreakable){
+   out+=`NBT::Unbreakble(tag${itemIndex});\n`;
+  }
+  
+  // ----- HideFlags -----
+  if(it.hideFlags.length){
+   let total=0;
+   it.hideFlags.forEach(v=>total+=v);
+   out+=`NBT::HideFlags(tag${itemIndex},${total});\n`;
+  }
+  
+  if(mode==="menu"){
+    out+=`SetMenu(getMenuAddress(MenuCategory::${menuCat.value}),${it.pos},${it.id},${it.count},${it.damage},tag${itemIndex});\n\n`;
+  }
+  else{
+    const slotRadio=document.querySelector('input[name="handType"]:checked');
+    const slot=slotRadio ? slotRadio.value : "0";
+    if(slot === "0"){
+      out+=`HandSummon_Plus(tag${itemIndex}, ${it.pos}, ${it.id}, ${it.count});\n\n`;
+    }
+    else{
+      out+=`SlotSummon_Plus(tag${itemIndex}, ${it.pos}, ${it.id}, ${it.count});\n\n`;
+    }
+  }
+
+ });
+
+ output.value=out;
+}
+
+document.querySelectorAll('input[name="mode"]').forEach(r=>{
+ r.onchange=()=>{
+  const mode=document.querySelector('input[name="mode"]:checked').value;
+
+  document.getElementById("menuPanel").style.display=
+    mode==="menu" ? "block":"none";
+
+  document.getElementById("handPanel").style.display=
+    mode==="hand" ? "block":"none";
+
+  update();
+ };
+});
+
+
+function copyOut(){
+ output.select();
+ document.execCommand('copy');
+}
+</script>
+
+<h4>
+  独自のライブラリを使用してC++でNBTtagを作ることができます。<br>
+  無限耐久, エンチャント, ステータス, ポーション, 名前, 色, 効果を隠す <br>
+  今はこんな感じで編集することができます。<br>
+  コード作成のライブラリが欲しい場合は、配布専用に新しく作ります。<br>
+</h4>
+</body>
+</html>

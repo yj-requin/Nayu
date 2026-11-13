@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lame Client - Official Wiki & Guide</title>
+  <style>
+    :root {
+      --accent-color: #b356d9;
+      --accent-light: #d17bff;
+      --accent-glow: rgba(179, 86, 217, 0.4);
+      --accent-bg: rgba(179, 86, 217, 0.15);
+      --accent-bg-hover: rgba(179, 86, 217, 0.3);
+      --accent-gradient: linear-gradient(90deg, rgba(179, 86, 217, 0.5) 0%, rgba(179, 86, 217, 0.1) 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: #111;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.15), transparent 70%),
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a2810"/><path d="M0 0h50v50H0z" fill="%23243816"/><path d="M50 50h50v50H50z" fill="%231f3213"/></svg>');
+      background-size: cover, cover, 64px 64px;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    /* Client GUI Main Container */
+    .client-container {
+      width: 1000px;
+      max-width: 100%;
+      height: 600px;
+      display: flex;
+      border: 3px solid var(--accent-color);
+      box-shadow: 0 0 20px var(--accent-glow), inset 0 0 15px rgba(0, 0, 0, 0.8);
+      position: relative;
+      background: rgba(18, 18, 20, 0.85);
+      backdrop-filter: blur(4px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    /* Top Utility Bar */
+    .top-bar {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      z-index: 10;
+      font-size: 15px;
+      font-weight: 500;
+      color: #ccc;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .top-bar .btn {
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .top-bar .btn:hover {
+      color: var(--accent-light);
+    }
+
+    .top-bar .logo-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 10px;
+      transition: color 0.3s;
+    }
+
+    .top-bar .logo-title span {
+      background: var(--accent-color);
+      color: #000;
+      padding: 0 4px;
+      font-size: 16px;
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+
+    /* Left Sidebar Tabs */
+    .sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      border-right: 2px solid var(--accent-color);
+      display: flex;
+      flex-direction: column;
+      background: rgba(10, 10, 12, 0.7);
+      padding-top: 15px;
+      overflow-y: auto;
+      transition: border-color 0.3s;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #d0d0d0;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      position: relative;
+      letter-spacing: 0.5px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+      background: var(--accent-bg);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      background: var(--accent-gradient);
+    }
+
+    .tab-btn.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent-light);
+      box-shadow: 0 0 8px var(--accent-light);
+    }
+
+    /* Main Content Area */
+    .content-area {
+      flex: 1;
+      padding: 25px 30px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .tab-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 5px;
+      width: max-content;
+      min-width: 150px;
+      transition: border-color 0.3s;
+    }
+
+    .tab-header h2 {
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .page-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .page-btn {
+      background: #333;
+      color: #fff;
+      border: 1px solid #666;
+      padding: 2px 10px;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 3px;
+    }
+
+    .page-btn:hover {
+      background: var(--accent-color);
+      border-color: var(--accent-light);
+    }
+
+    /* Grid Layout for Modules */
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .module-card {
+      background: rgba(45, 45, 50, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 15px;
+      font-weight: 500;
+      color: #e0e0e0;
+      text-shadow: 1px 1px 2px #000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+      border-radius: 3px;
+    }
+
+    .module-card:hover {
+      background: var(--accent-bg-hover);
+      border-color: var(--accent-color);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px var(--accent-glow);
+    }
+
+    /* Settings View Styling */
+    .sub-tabs {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .sub-tab-btn {
+      font-size: 18px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+      padding-bottom: 2px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .sub-tab-btn:hover {
+      color: #fff;
+    }
+
+    .sub-tab-btn.active {
+      color: #fff;
+      background: var(--accent-bg-hover);
+      padding: 2px 12px;
+      border-bottom: 3px solid var(--accent-light);
+      border-radius: 2px;
+    }
+
+    .settings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 650px;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      color: #ddd;
+      padding: 6px 0;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .setting-label-clickable {
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .setting-label-clickable:hover {
+      color: var(--accent-light);
+      text-decoration: underline;
+    }
+
+    .toggle-switch {
+      width: 45px;
+      height: 22px;
+      background: #444;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid #666;
+    }
+
+    .toggle-switch.on {
+      background: var(--accent-color);
+      border-color: var(--accent-light);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      transition: left 0.2s;
+    }
+
+    .toggle-switch.on::after {
+      left: 25px;
+    }
+
+    /* Accent Color Palette */
+    .color-palette {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .color-box {
+      width: 24px;
+      height: 24px;
+      border-radius: 3px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: transform 0.1s;
+    }
+
+    .color-box:hover {
+      transform: scale(1.15);
+    }
+
+    /* Config SubTab Layout */
+    .config-container {
+      display: flex;
+      gap: 40px;
+      margin-top: 10px;
+    }
+
+    .config-section {
+      flex: 1;
+    }
+
+    .config-section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--accent-color);
+      margin-bottom: 12px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .config-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      background: rgba(45, 45, 50, 0.8);
+      border: 1px solid var(--accent-color);
+      color: #fff;
+      font-size: 15px;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 3px;
+    }
+
+    .config-btn:hover {
+      background: var(--accent-bg-hover);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .config-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .config-item {
+      padding: 10px 15px;
+      background: rgba(35, 35, 40, 0.7);
+      font-size: 15px;
+      color: #ccc;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 3px;
+    }
+
+    .config-item:hover {
+      background: var(--accent-bg);
+    }
+
+    .config-item.active {
+      background: var(--accent-bg-hover);
+      color: #fff;
+      border-color: var(--accent-light);
+    }
+
+    /* About Content Layout */
+    .about-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    .about-top-container {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+    }
+
+    .about-image-box {
+      width: 320px;
+      max-width: 45%;
+      height: 200px;
+      background: rgba(20, 20, 25, 0.8);
+      border: 1px solid var(--accent-color);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .about-image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .about-image-fallback {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--accent-light);
+      text-align: center;
+      text-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .about-credits-box {
+      flex: 1;
+    }
+
+    .credits-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--accent-light);
+      margin-bottom: 15px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .credits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .credit-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #eee;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      padding: 6px 12px;
+      background: rgba(45, 45, 50, 0.5);
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .credit-name:hover {
+      background: var(--accent-bg-hover);
+      border-color: var(--accent-color);
+      color: #fff;
+      transform: translateX(4px);
+    }
+
+    .about-bottom-info {
+      display: flex;
+      gap: 80px;
+      margin-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 15px;
+    }
+
+    .info-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .info-val {
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    /* Modal / Popup Overlay */
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      backdrop-filter: blur(2px);
+      padding: 20px;
+      cursor: pointer;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      width: 480px;
+      max-width: 100%;
+      background: #1e1e24;
+      border: 2px solid var(--accent-color);
+      box-shadow: 0 0 25px var(--accent-glow);
+      padding: 25px;
+      position: relative;
+      border-radius: 4px;
+      cursor: default;
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--accent-light);
+      margin-bottom: 5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 5px;
+    }
+
+    .modal-category {
+      font-size: 13px;
+      font-weight: bold;
+      color: #888;
+      margin-bottom: 15px;
+    }
+
+    .modal-desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #ddd;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+    }
+
+    .modal-close {
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      float: right;
+      transition: background 0.2s;
+      border-radius: 3px;
+    }
+
+    .modal-close:hover {
+      background: var(--accent-light);
+    }
+
+    /* Empty tab message */
+    .empty-msg {
+      color: #666;
+      font-size: 18px;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    /* Responsive Styles for Mobile / Tablet */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+        align-items: flex-start;
+      }
+
+      .client-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 90vh;
+      }
+
+      .top-bar {
+        position: relative;
+        top: 0;
+        right: 0;
+        padding: 12px 15px;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: space-between;
+        width: 100%;
+        border-bottom: 1px solid var(--accent-color);
+        font-size: 13px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 2px solid var(--accent-color);
+        padding-top: 0;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .tab-btn {
+        padding: 10px 15px;
+        font-size: 14px;
+        display: inline-block;
+      }
+
+      .tab-btn.active::before {
+        width: 100%;
+        height: 3px;
+        top: auto;
+        bottom: 0;
+        left: 0;
+      }
+
+      .content-area {
+        padding: 15px;
+      }
+
+      .module-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .module-card {
+        font-size: 13px;
+        padding: 10px 5px;
+      }
+
+      .config-container, .about-top-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .about-image-box {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .module-grid {
+        grid-template-columns: repeat(1, 1fr);
+      }
+
+      .top-bar .btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="client-container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="btn">Random Server</div>
+      <div class="btn">CodeWrite</div>
+      <div class="btn">HUD Editor</div>
+      <div class="logo-title">Lame Client</div>
+    </div>
+
+    <!-- Left Category Sidebar -->
+    <div class="sidebar">
+      <div class="tab-btn active" onclick="switchTab('Combat')">Combat</div>
+      <div class="tab-btn" onclick="switchTab('Movement')">Movement</div>
+      <div class="tab-btn" onclick="switchTab('Render')">Render</div>
+      <div class="tab-btn" onclick="switchTab('Items')">Items</div>
+      <div class="tab-btn" onclick="switchTab('World')">World</div>
+      <div class="tab-btn" onclick="switchTab('Host')">Host</div>
+      <div class="tab-btn" onclick="switchTab('Misc')">Misc</div>
+      <div class="tab-btn" onclick="switchTab('ModMenu')">ModMenu</div>
+      <div class="tab-btn" onclick="switchTab('PlayerList')">PlayerList</div>
+      <div class="tab-btn" onclick="switchTab('Chat')">Chat</div>
+      <div class="tab-btn" onclick="switchTab('Settings')">Settings</div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content-area">
+      <div id="tab-header-container">
+        <!-- Tab Header injected dynamically -->
+      </div>
+
+      <div id="main-view">
+        <!-- Module Grid or Settings View injected dynamically -->
+      </div>
+    </div>
+
+    <!-- Modal Dialog for Module Description & Developers -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-title" id="modal-title">Title</div>
+        <div class="modal-category" id="modal-category">CATEGORY</div>
+        <div class="modal-desc" id="modal-desc">Description text goes here.</div>
+        <button class="modal-close" onclick="closeModal()">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Module Data Store
+    const moduleData = {
+      Combat: [
+        "Aimbot", "AimAssist", "AutoGapple", "AntiKB",
+        "Reach", "Critical", "EasyHitArrow", "FastBow",
+        "FastZL", "FastZR", "InfiniteAura", "Laura",
+        "KillAura", "MultiAura", "TPAura", "ZRRiptide",
+        "PerfectArmor", "GuardAttack", "MultiBow", "AimAttack",
+        "CircleAura", "BowAura", "NoAttackAnimation", "FastBreak"
+      ],
+      Movement: [
+        "BunnyHop", "ClickTP", "Fly", "Jesus",
+        "MGUnlockMove", "MoonJump", "NoClip", "NoSlow",
+        "Step", "Spider", "NoWeb", "Speed",
+        "360Neck", "AirJump", "WaterLaunch", "LavaLaunch",
+        "InventoryWalk", "ThroughWall", "AlwaysElytra", "WaterFly",
+        "PacketSneak", "AutoSneak", "PacketSwim", "NoFall",
+        "AutoSprint", "Freecam", "BoatFly", "HighJump",
+        "FastLadders", "FastBridge"
+      ],
+      Render1: [
+        "AntiTexture", "ArmorHud", "BetterFont", "ChestESP",
+        "Coordinates", "ESP", "FullBright", "KeyboardOnTV",
+        "NameTags", "NoFire", "NoRain", "Shader",
+        "ShowFPS", "HitBox", "LevelNorm", "Zoom",
+        "ShowCPS", "KeyStroke", "ItemPhysics", "NoParticle",
+        "WallHack", "XRay", "NoHurtCam", "RainbowHit",
+        "StickStroke", "ViewDistance", "NoFog", "SkinSizeChange",
+        "CustomSky", "CustomPanorama", "BoostFPS", "ArrayList",
+        "TrueSight", "TNT Timer", "AnimCape", "CustomFov"
+      ],
+      Render2: [
+        "TabGui", "ImageRender", "NoTotemAnim", "HDItems",
+        "RadarHUD", "PaperDoll", "LameClientLogo", "Measure"
+      ],
+      Items: [
+        "CraftEverything", "DropStack", "GappleDetector", "InstantCraft",
+        "ItemStack", "SwapOffHand", "ChestSteal", "FastCraft",
+        "GivePVPKit", "InventoryClear", "ItemPaste", "RainbowArmor",
+        "CustomItem", "ShowItemID", "InventorySort"
+      ],
+      World: [
+        "WorldChat", "AntiKick", "BedrockBreak", "CrashHost",
+        "EarRape", "FastNuker", "MicMute", "AntiFallDamage",
+        "PlayerLimit", "Nuker", "MGPlace", "TrollTNT",
+        "NetworkKiller", "SoundPlayer", "MGLobbyTP", "KillCommand",
+        "LowerFPS", "FastBuilder", "Signeditor", "WorldEdit",
+        "ChatSpammer", "AntiEarRape", "Clone"
+      ],
+      Host: [
+        "ChatBook", "CreativeDamage", "Combo", "MGAntiEnd",
+        "MGEnd", "MGHostOption", "AntiCraft", "NuclearTNT",
+        "InstantTNT", "RocketTNT", "EggExplosion", "SnowballDragonBreath",
+        "ArrowExplosion", "UnlockMobLimit", "AutoConsume", "ExplosionSnowball",
+        "FlowerPot", "RemoveArmorRestriction", "RemoveOffHandRestriction", "UnlockBlockLimit",
+        "UnlockEnchantLimit", "TNTBreakDisabled", "NestedShulker", "AntiEnchGapple",
+        "FastPot", "SitPlugin", "SignCommand"
+      ],
+      Misc: [
+        "ExitClient", "Presence", "ToMenu", "UnlockHome",
+        "LameVersion", "UnlockDLC", "ExcretaRoit", "Dance",
+        "ChangeNNID", "RandomNNID", "ChangeMiiName", "MicVolumeChanger",
+        "LoudMic", "LoudMic2", "NoCensored", "VoteIncrease",
+        "RandomXUID", "AntiCommands", "MGSwapSkin", "LameClient",
+        "MGStart", "VoteKick", "Breakout", "Tetris",
+        "FullGameMode", "VoiceChanger", "FriendsOfBypass", "BackToDeath"
+      ],
+      ModMenu: [
+        "cinoMenu", "SpeedBoots", "CustomPotion", "ChestMenu",
+        "HackItemMenu", "ArmorColor", "EggWars"
+      ]
+    };
+
+    // Descriptions Store for Tooltips/Modals
+    const descriptions = {
+      // --- Combat ---
+      "Aimbot": "近くにいるプレイヤーを自動で検知し、相手の顔の位置に視点を合わせてくれます。",
+      "AimAssist": "視点を合わせたプレイヤーの顔周りに視点をアシストしてくれます。",
+      "AutoGapple": "左手にある上位の金リンゴを自動で食べてくれます。",
+      "AntiKB": "自身の攻撃された際のノックバックを完全に無効化します。",
+      "Reach": "自身のリーチが強化します。",
+      "Critical": "自身が殴って攻撃するとき、クリティカルで確定で攻撃します。",
+      "EasyHitArrow": "自身に力の矢を最小攻撃で当てます。",
+      "FastBow": "弓を最速で撃てます。",
+      "FastZL": "ZL連打ができます。",
+      "FastZR": "ZR連打ができます。",
+      "InfiniteAura": "",
+      "Laura": "自分好みにTPAuraを使えるようになります。",
+      "KillAura": "自身以外のプレイヤーの当たり判定を強化します。",
+      "MultiAura": "自身の周りにいる複数のプレイヤーに攻撃を当てます。",
+      "TPAura": "",
+      "ZRRiptide": "ZRで激流を発動できます。",
+      "PerfectArmor": "即時にダイヤモンド装備を装着できます。",
+      "GuardAttack": "ガード状態で攻撃をすることができます。",
+      "MultiBow": "最速で弓を広範囲に撃つことができます。",
+      "AimAttack": "相手の当たり判定に視点が合うと、自動で攻撃してくれます。",
+      "CircleAura": "",
+      "BowAura": "動いてないプレイヤーを指定式で弓の最大チャージを最速で当てることができます。",
+      "NoAttackAnimation": "攻撃モーションがなくなります。",
+      "FastBreak": "パケット式で目の前のブロックを最速で壊すことができます。",
+
+      // --- Movement ---
+      "BunnyHop": "うさぎのような飛び方ができます。",
+      "ClickTP": "クリックした場所までテレポートできます。",
+      "Fly": "飛べます。",
+      "Jesus": "液体の上を歩くことができます。",
+      "MGUnlockMove": "ミニゲーム最初の動けないルールを無視できます。",
+      "MoonJump": "ゆっくりと高くジャンプできます。",
+      "NoClip": "ブロックを貫通することができます。",
+      "NoSlow": "走れなくなる問題を無効化します。",
+      "Step": "2マス以上の壁を天井上までテレポートします。",
+      "Spider": "蜘蛛のように壁を登ることができます。",
+      "NoWeb": "蜘蛛の巣を無効化します。",
+      "Speed": "移動するスピードを変更します。",
+      "360Neck": "首を360度動かすことができます。",
+      "AirJump": "空中を飛ぶことができます。",
+      "WaterLaunch": "水の中に入ると高く飛べるようになります。",
+      "LavaLaunch": "溶岩の中に入ると高く飛べるようになります。",
+      "InventoryWalk": "インベントリー欄を開きながら移動することができます。",
+      "ThroughWall": "壁を貫通することができます。",
+      "AlwaysElytra": "常にエリトラで滑空状態になります。",
+      "WaterFly": "水のない場所でも泳ぐように飛ぶことができます。",
+      "PacketSneak": "相手視点で自動でスニークをするようになります。",
+      "AutoSneak": "常にスニークをします。",
+      "PacketSwim": "相手視点で自動で泳いでるようになります。",
+      "NoFall": "",
+      "AutoSprint": "常にダッシュ状態になります。",
+      "Freecam": "",
+      "BoatFly": "ボートの操作が自由に可能になります。",
+      "HighJump": "高くジャンプできます。",
+      "FastLadders": "",
+      "FastBridge": "高速で橋を作れます。",
+
+      // --- Render ---
+      "AntiTexture": "テクスチャのロードを無効化します。",
+      "ArmorHud": "防具の状態を左側に表示します。",
+      "BetterFont": "ゲーム内の文字が綺麗になります。",
+      "ChestESP": "チェスト類のブロックアイテムがわかりやすく描画されます。",
+      "Coordinates": "座標を表示します。",
+      "ESP": "プレイヤーの場所を特定します。",
+      "FullBright": "ゲーム画面を明るくします。",
+      "KeyboardOnTV": "テレビ画面でもキーボードを表示します。",
+      "NameTags": "全プレイヤーの名前を常に表示します。",
+      "NoFire": "燃えてる描画を非表示にします。",
+      "NoRain": "雨や雷を非表示にします。",
+      "Shader": "影が強化されます。",
+      "ShowFPS": "FPSが描画されます。",
+      "HitBox": "エンティティの当たり判定を表示します。",
+      "LevelNorm": "エンチャントやポーションのレベル、時間を数字で正確に表示します。",
+      "Zoom": "ズームをすることができます。",
+      "ShowCPS": "CPSを描画します。",
+      "KeyStroke": "WASD、ジャンプ、LRを描画します。",
+      "ItemPhysics": "アイテムの物理回転を無効化します。",
+      "NoParticle": "パーティクルを非表示にします。",
+      "WallHack": "壁のブロックが透過します。",
+      "XRay": "ブロックがが透過します。",
+      "NoHurtCam": "",
+      "RainbowHit": "ブロックの枠を虹色にします。",
+      "StickStroke": "スティックの向きを表示します。",
+      "ViewDistance": "",
+      "NoFog": "",
+      "SkinSizeChange": "スキンのサイズを変更できます。",
+      "CustomSky": "空の見た目をテクスチャで変更できます。",
+      "CustomPanorama": "",
+      "BoostFPS": "",
+      "ArrayList": "",
+      "TrueSight": "",
+      "TNT Timer": "TNTの爆発までの時間を表示することができます。",
+      "AnimCape": "pck内の上書きされているマントをアニメーション指定することができます。",
+      "CustomFov": "",
+      "TabGui": "",
+      "ImageRender": "",
+      "NoTotemAnim": "不死のトーテムのアニメーションを無効化します。",
+      "HDItems": "",
+      "RadarHUD": "",
+      "PaperDoll": "",
+      "LameClientLogo": "",
+      "Measure": "",
+
+      // --- Items ---
+      "CraftEverything": "なんでもクラフトすることができます。",
+      "DropStack": "アイテムを捨てる際、2個以上で捨てることができます。",
+      "GappleDetector": "他プレイヤーが上位の金リンゴを手に持つとログを出して検知します。",
+      "InstantCraft": "即時武装",
+      "ItemStack": "手に持ってるアイテムの数を64個にしてくれます。",
+      "SwapOffHand": "手に持ってるアイテムを左手に移動することができます。",
+      "ChestSteal": "チェスト内のアイテムを自分のインベントリーの中に一括で取得することができます。",
+      "FastCraft": "高速でクラフトすることができます。",
+      "GivePVPKit": "スピガのキットを召喚します。",
+      "InventoryClear": "インベントリーの中身を綺麗に掃除します。",
+      "ItemPaste": "アイテムをコピーしてペーストすることができます。",
+      "RainbowArmor": "レインボーアーマーを装備することができます。",
+      "CustomItem": "手元にアイテムを召喚します。",
+      "ShowItemID": "アイテムの詳細説明を表示することができます。",
+      "InventorySort": "インベントリーのアイテムを綺麗に整理整頓することができます。",
+
+      // --- World ---
+      "WorldChat": "ワールド内でチャットをすることができます。",
+      "AntiKick": "追放されなくなります。",
+      "BedrockBreak": "岩盤を掘ることができます。",
+      "CrashHost": "ホストの回線をクラッシュさせることができます。",
+      "EarRape": "指定音荒らし",
+      "FastNuker": "高速でブロックを一括破壊することができます。",
+      "MicMute": "ミュートにすることができます。",
+      "AntiFallDamage": "全員落下無効",
+      "PlayerLimit": "人数制限",
+      "Nuker": "一括破壊",
+      "MGPlace": "ミニゲーム内でブロックを置くことができます。",
+      "TrollTNT": "TNT荒らし",
+      "NetworkKiller": "ネットワークを切断することができます。",
+      "SoundPlayer": "",
+      "MGLobbyTP": "ミニゲーム内でロビーにテレポートすることができます。",
+      "KillCommand": "自身をキルできるコマンドを発動します。",
+      "LowerFPS": "FPSを下げます。",
+      "FastBuilder": "高速でブロックを一括設置することができます。",
+      "Signeditor": "",
+      "WorldEdit": "ワールドエディットを使用することができます。",
+      "ChatSpammer": "",
+      "AntiEarRape": "EarRape無効",
+      "Clone": "",
+
+      // --- Host ---
+      "ChatBook": "チャット可能",
+      "CreativeDamage": "クリエイティブモードでダメージが通る。",
+      "Combo": "コンボできるようになる。",
+      "MGAntiEnd": "ミニゲーム終わらない",
+      "MGEnd": "ミニゲーム終わる",
+      "MGHostOption": "ミニゲームでホストオプションを有効化",
+      "AntiCraft": "クラフト無効",
+      "NuclearTNT": "",
+      "InstantTNT": "",
+      "RocketTNT": "",
+      "EggExplosion": "卵投げると爆発",
+      "SnowballDragonBreath": "雪玉投げるとドラゴンブレス",
+      "ArrowExplosion": "矢を撃つと爆発",
+      "UnlockMobLimit": "モブの上限解放",
+      "AutoConsume": "",
+      "ExplosionSnowball": "雪玉を投げると爆発",
+      "FlowerPot": "",
+      "RemoveArmorRestriction": "",
+      "RemoveOffHandRestriction": "",
+      "UnlockBlockLimit": "ブロックエンティティの上限解放",
+      "UnlockEnchantLimit": "エンチャントレベルの上限解放",
+      "TNTBreakDisabled": "",
+      "NestedShulker": "",
+      "AntiEnchGapple": "上位の金リンゴ無効化",
+      "FastPot": "",
+      "SitPlugin": "座るプラグイン",
+      "SignCommand": "看板でコマンド",
+
+      // --- Misc ---
+      "ExitClient": "クライアントを閉じてホームメニューに戻る",
+      "Presence": "",
+      "ToMenu": "ワールドから去る",
+      "UnlockHome": "ホームボタン解除",
+      "LameVersion": "",
+      "UnlockDLC": "",
+      "ExcretaRoit": "",
+      "Dance": "自分視点で全員ダンス",
+      "ChangeNNID": "NNIDを変更できる",
+      "RandomNNID": "ランダムでNNIDが変更される",
+      "ChangeMiiName": "Miiの名前を変更できる",
+      "MicVolumeChanger": "",
+      "LoudMic": "",
+      "LoudMic2": "",
+      "NoCensored": "看板バグを無効化",
+      "VoteIncrease": "",
+      "RandomXUID": "XUIDをランダムに変更",
+      "AntiCommands": "相手側が操作する自身のコマンドを無効化",
+      "MGSwapSkin": "ミニゲームでスキン変更可能",
+      "LameClient": "",
+      "MGStart": "ミニゲームスタート",
+      "VoteKick": "",
+      "Breakout": "",
+      "Tetris": "テトリスができます。",
+      "FullGameMode": "ゲームモードが追加されます。",
+      "VoiceChanger": "ボイスチェンジャーができます。",
+      "FriendsOfBypass": "フレンドのフレンドの許可を無効化します。",
+      "BackToDeath": "死んだ場所にテレポートできます。",
+
+      // --- ModMenu ---
+      "cinoMenu": "ちのさんが作ったアイテムメニューがツールタブに追加されるぞ！\n恐れ入ったか！えっへん。",
+      "SpeedBoots": "スピード付与のブーツがツールタブに適応されます。",
+      "CustomPotion": "いろいろなポーションが材料タブに適応されます。",
+      "ChestMenu": "ルートテーブルメニューが材料タブに適応されます。",
+      "HackItemMenu": "普段出せないハックアイテムが材料タブに適応されます。",
+      "ArmorColor": "色付き防具や地図がツールタブに適応されます。",
+      "EggWars": "16色のエッグウォーズの村人スポナーを材料タブに適応されます。"
+    };
+
+    // Settings Toggle Item Descriptions
+    const settingDescriptions = {
+      "Show Experimental Features": "",
+      "Hide Menu Icon": "メニューアイコンの表示",
+      "Show IP Address": "位置情報(IP)の表示",
+      "Enable Rich Presence": "Presenceの表示設定",
+      "Show Recipe ID Overlay": "クラフトレシピのID表示",
+      "Show notifications on top-left": "通知位置設定",
+      "Rainbow Mode": "UIのアクセントカラーを虹色にゆっくり変化させます。",
+      "Sakura Fall": "画面背景に桜の花びらが舞い落ちるエフェクトを追加します。",
+      "Snow Fall": "画面背景に雪が降るエフェクトを追加します。",
+      "Rainy Day": "画面背景に雨が降るエフェクトを追加します。",
+      "Shooting Stars": "画面背景に流れ星が流れるエフェクトを追加します。",
+      "AntiCustomSkin": "カスタムスキンの修正",
+      "AntiCrashArrow": "タグが重なった矢でクラッシュする問題の修正",
+      "AntiCrashFish": "テクスチャが存在しない魚のアイテムデータを読み込んだ時のクラッシュする問題の修正",
+      "AntiCrashDispenser": "ワールドの高さ上限にシュルカーボックスを強制的に置くとクラッシュする問題の修正",
+      "AntiCrashTP": "不正な座標への強制テレポートクラッシュを無効化します。",
+      "AntiCrashDoor": "ピストンドアを使ったクラッシュする問題の修正",
+      "NetworkProtect": "ネットワーク切断を無効化します。",
+      "AntiCrashSteal": "チェストスティールでクラッシュする際の問題を修正します。",
+      "FixSplashPotion": "スプラッシュポーションを投げた際、2個以上使う問題を修正します。",
+      "AntiCrashPacket": "クラフトアイテムによるパケット送信を無効化します。",
+      "AntiCrashSkull": "存在しないガイコツの頭のダメージ値がずれた際の問題を修正します。",
+      "AntiCrashInventory": "インベントリー内にある存在しないアイテムがある場合、無効化します。"
+    };
+
+    // Developers Store
+    const developerData = {
+      "KITUNE": {
+        role: "Main Developer / Owner",
+        desc: "Lame Clientのメイン開発者。主にモジュールの開発と修正"
+      },
+      "nayu": {
+        role: "Support Developer",
+        desc: "Clientのベース、ModMenuの開発担当、NBTtagやアイテム関連、ソースコードの修正"
+      },
+      "JUUN893": {
+        role: "Sub Developer",
+        desc: "FPSBoost、Webライセンスシステム、クラック防止機能などの機能強化、モジュールの開発"
+      },
+      "AzeY": {
+        role: "Support Sub Developer",
+        desc: "ソースコードの提供"
+      }
+    };
+
+    let currentTab = 'Combat';
+    let currentRenderPage = 1;
+    let currentSettingsSubTab = 'General';
+
+    function switchTab(tabName) {
+      currentTab = tabName;
+      
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText === tabName);
+      });
+
+      renderContent();
+    }
+
+    function renderContent() {
+      const headerContainer = document.getElementById('tab-header-container');
+      const mainView = document.getElementById('main-view');
+
+      headerContainer.innerHTML = '';
+      mainView.innerHTML = '';
+
+      if (currentTab === 'Settings') {
+        renderSettings();
+        return;
+      }
+
+      if (currentTab === 'PlayerList' || currentTab === 'Chat') {
+        headerContainer.innerHTML = `<div class="tab-header"><h2>${currentTab}</h2></div>`;
+        mainView.innerHTML = `<div class="empty-msg">このタブには表示項目がありません。</div>`;
+        return;
+      }
+
+      let modules = [];
+      let headerHTML = `<div class="tab-header"><h2>${currentTab}</h2>`;
+
+      if (currentTab === 'Render') {
+        headerHTML += `
+          <div class="page-controls">
+            <span>Page ${currentRenderPage}/2</span>
+            <button class="page-btn" onclick="changeRenderPage(1)">&lt;</button>
+            <button class="page-btn" onclick="changeRenderPage(2)">&gt;</button>
+          </div>
+        `;
+        modules = currentRenderPage === 1 ? moduleData.Render1 : moduleData.Render2;
+      } else {
+        modules = moduleData[currentTab] || [];
+      }
+
+      headerHTML += `</div>`;
+      headerContainer.innerHTML = headerHTML;
+
+      let gridHTML = `<div class="module-grid">`;
+      modules.forEach(mod => {
+        gridHTML += `<div class="module-card" onclick="openModal('${mod}', '${currentTab}')">${mod}</div>`;
+      });
+      gridHTML += `</div>`;
+
+      mainView.innerHTML = gridHTML;
+    }
+
+    function changeRenderPage(page) {
+      currentRenderPage = page;
+      renderContent();
+    }
+
+    function switchSettingsSubTab(subTab) {
+      currentSettingsSubTab = subTab;
+      renderSettings();
+    }
+
+    function renderSettings() {
+      const headerContainer = document.getElementById('tab-header-container');
+      const mainView = document.getElementById('main-view');
+
+      headerContainer.innerHTML = `
+        <div class="tab-header"><h2>Settings</h2></div>
+        <div class="sub-tabs">
+          <div class="sub-tab-btn ${currentSettingsSubTab === 'General' ? 'active' : ''}" onclick="switchSettingsSubTab('General')">General</div>
+          <div class="sub-tab-btn ${currentSettingsSubTab === 'Theme' ? 'active' : ''}" onclick="switchSettingsSubTab('Theme')">Theme</div>
+          <div class="sub-tab-btn ${currentSettingsSubTab === 'Patch' ? 'active' : ''}" onclick="switchSettingsSubTab('Patch')">Patch</div>
+          <div class="sub-tab-btn ${currentSettingsSubTab === 'Config' ? 'active' : ''}" onclick="switchSettingsSubTab('Config')">Config</div>
+          <div class="sub-tab-btn ${currentSettingsSubTab === 'About' ? 'active' : ''}" onclick="switchSettingsSubTab('About')">About</div>
+          <div class="sub-tab-btn ${currentSettingsSubTab === 'Dev' ? 'active' : ''}" onclick="switchSettingsSubTab('Dev')">Dev</div>
+        </div>
+      `;
+
+      if (currentSettingsSubTab === 'General') {
+        mainView.innerHTML = `
+          <div class="settings-list">
+            ${createSettingItem("Show Experimental Features")}
+            ${createSettingItem("Hide Menu Icon")}
+            ${createSettingItem("Show IP Address")}
+            ${createSettingItem("Enable Rich Presence")}
+            ${createSettingItem("Show Recipe ID Overlay")}
+            ${createSettingItem("Show notifications on top-left")}
+            <div class="setting-item">
+              <span>Menu Toggle Key</span>
+              <span style="color:var(--accent-light); font-weight:bold; font-size:18px;">L+R</span>
+            </div>
+          </div>
+        `;
+      } else if (currentSettingsSubTab === 'Theme') {
+        mainView.innerHTML = `
+          <div class="settings-list">
+            ${createSettingItem("Rainbow Mode")}
+            ${createSettingItem("Sakura Fall")}
+            ${createSettingItem("Snow Fall")}
+            ${createSettingItem("Rainy Day")}
+            ${createSettingItem("Shooting Stars")}
+            <div class="setting-item" style="margin-top: 10px;">
+              <span>Accent Color:</span>
+              <div class="color-palette">
+                <div class="color-box" style="background: #00e5ff;" onclick="setAccentColor('#00e5ff')"></div>
+                <div class="color-box" style="background: #ff0000;" onclick="setAccentColor('#ff0000')"></div>
+                <div class="color-box" style="background: #ffcc00;" onclick="setAccentColor('#ffcc00')"></div>
+                <div class="color-box" style="background: #ccff00;" onclick="setAccentColor('#ccff00')"></div>
+                <div class="color-box" style="background: #00ff00;" onclick="setAccentColor('#00ff00')"></div>
+                <div class="color-box" style="background: #0022ff;" onclick="setAccentColor('#0022ff')"></div>
+                <div class="color-box" style="background: #a822ff;" onclick="setAccentColor('#a822ff')"></div>
+                <div class="color-box" style="background: #ffb3d9;" onclick="setAccentColor('#ffb3d9')"></div>
+                <div class="color-box" style="background: #d17bff;" onclick="setAccentColor('#b356d9')"></div>
+                <div class="color-box" style="background: #ffffff;" onclick="setAccentColor('#ffffff')"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentSettingsSubTab === 'Patch') {
+        mainView.innerHTML = `
+          <div class="settings-list">
+            ${createSettingItem("AntiCustomSkin", true)}
+            ${createSettingItem("AntiCrashArrow", true)}
+            ${createSettingItem("AntiCrashFish", true)}
+            ${createSettingItem("AntiCrashDispenser", true)}
+            ${createSettingItem("AntiCrashTP", true)}
+            ${createSettingItem("AntiCrashDoor", true)}
+            ${createSettingItem("NetworkProtect", true)}
+            ${createSettingItem("AntiCrashSteal", true)}
+            ${createSettingItem("FixSplashPotion", true)}
+            ${createSettingItem("AntiCrashPacket", true)}
+            ${createSettingItem("AntiCrashSkull", true)}
+            ${createSettingItem("AntiCrashInventory", true)}
+          </div>
+        `;
+      } else if (currentSettingsSubTab === 'Config') {
+        mainView.innerHTML = `
+          <div class="config-container">
+            <div class="config-section">
+              <div class="config-section-title">Actions:</div>
+              <button class="config-btn">Load Selected</button>
+              <button class="config-btn">Save Config</button>
+              <button class="config-btn">Refresh List</button>
+            </div>
+            <div class="config-section">
+              <div class="config-section-title">Profile List:</div>
+              <div class="config-list">
+                <div class="config-item active">default.cfg</div>
+                <div class="config-item">senden.cfg</div>
+                <div class="config-item" style="color: #888;">[Create New Profile]</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (currentSettingsSubTab === 'About') {
+        mainView.innerHTML = `
+          <div class="about-layout">
+            <div class="about-top-container">
+              <div class="about-image-box">
+                <img src="about_image.png" alt="LameClient Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="about-image-fallback" style="display:none;">LameClient</div>
+              </div>
+
+              <div class="about-credits-box">
+                <div class="credits-title">Credits</div>
+                <div class="credits-list">
+                  <div class="credit-name" onclick="openDevModal('KITUNE')">KITUNE</div>
+                  <div class="credit-name" onclick="openDevModal('nayu')">nayu</div>
+                  <div class="credit-name" onclick="openDevModal('JUUN893')">JUUN893</div>
+                  <div class="credit-name" onclick="openDevModal('AzeY')">AzeY</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="about-bottom-info">
+              <div class="info-group">
+                <div class="info-label">Version</div>
+                <div class="info-val">v4.1</div>
+              </div>
+              <div class="info-group">
+                <div class="info-label">Build</div>
+                <div class="info-val">2026.08.12</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        mainView.innerHTML = `<div class="empty-msg">${currentSettingsSubTab} の設定項目は現在準備中です。</div>`;
+      }
+    }
+
+    // Helper for Settings Row Creation
+    function createSettingItem(name, isOn = false) {
+      return `
+        <div class="setting-item">
+          <span class="setting-label-clickable" onclick="openSettingModal('${name}')">${name}</span>
+          <div class="toggle-switch ${isOn ? 'on' : ''}" onclick="this.classList.toggle('on')"></div>
+        </div>
+      `;
+    }
+
+    // Color Theme Switcher
+    function setAccentColor(hexColor) {
+      const root = document.documentElement;
+      let lightColor = hexColor;
+      
+      // Calculate a slightly lighter version for glow/hover
+      if (hexColor === '#b356d9') lightColor = '#d17bff';
+      else if (hexColor === '#00e5ff') lightColor = '#80f3ff';
+      else if (hexColor === '#ff0000') lightColor = '#ff6666';
+      else if (hexColor === '#ffcc00') lightColor = '#ffea80';
+      else if (hexColor === '#ccff00') lightColor = '#e6ff80';
+      else if (hexColor === '#00ff00') lightColor = '#80ff80';
+      else if (hexColor === '#0022ff') lightColor = '#667aff';
+      else if (hexColor === '#a822ff') lightColor = '#c973ff';
+      else if (hexColor === '#ffb3d9') lightColor = '#ffffff';
+      else if (hexColor === '#ffffff') lightColor = '#e6e6e6';
+
+      root.style.setProperty('--accent-color', hexColor);
+      root.style.setProperty('--accent-light', lightColor);
+      root.style.setProperty('--accent-glow', `${hexColor}66`);
+      root.style.setProperty('--accent-bg', `${hexColor}26`);
+      root.style.setProperty('--accent-bg-hover', `${hexColor}4D`);
+      root.style.setProperty('--accent-gradient', `linear-gradient(90deg, ${hexColor}80 0%, ${hexColor}1A 100%)`);
+    }
+
+    // Modal Operations
+    function openModal(name, category) {
+      document.getElementById('modal-title').innerText = name;
+      document.getElementById('modal-category').innerText = `CATEGORY: ${category.toUpperCase()}`;
+      
+      const desc = descriptions[name] && descriptions[name].trim() !== "" 
+        ? descriptions[name] 
+        : `${name} の説明文は未設定です。`;
+      
+      document.getElementById('modal-desc').innerText = desc;
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function openSettingModal(name) {
+      document.getElementById('modal-title').innerText = name;
+      document.getElementById('modal-category').innerText = `SETTINGS / OPTION`;
+      
+      const desc = settingDescriptions[name] || `${name} の詳細説明です。`;
+      document.getElementById('modal-desc').innerText = desc;
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function openDevModal(devName) {
+      const dev = developerData[devName] || { role: "Developer", desc: "詳細情報は設定されていません。" };
+      document.getElementById('modal-title').innerText = devName;
+      document.getElementById('modal-category').innerText = `DEVELOPER / ${dev.role.toUpperCase()}`;
+      document.getElementById('modal-desc').innerText = dev.desc;
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+
+    // Initialize View
+    renderContent();
+  </script>
+</body>
+</html>

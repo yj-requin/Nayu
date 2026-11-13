@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IdGen</title>
+<style>
+body {
+  font-family: "Segoe UI", "Hiragino Sans", sans-serif;
+  background: #fff;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
+
+h2 {
+  color: #e94e77;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+textarea, .output {
+  width: 100%;
+  max-width: 500px;
+  height: 200px;
+  border-radius: 12px;
+  border: 2px solid #f7b6c2;
+  padding: 10px;
+  font-size: 15px;
+  resize: none;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.output {
+  background: #fff0f5;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  background-color: #f7b6c2;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background-color: #f38ca6;
+}
+
+button:active {
+  background-color: #e6728e;
+}
+
+@media (min-width: 700px) {
+  .container {
+    flex-wrap: nowrap;
+  }
+  textarea, .output {
+    width: 48%;
+    height: 300px;
+  }
+}
+</style>
+</head>
+<body>
+<h2>[NNID・PNID] 変更コード 作成ツール</h2>
+
+<div class="container">
+  <textarea id="inputText" placeholder="ここに変更したい文字を入力..."></textarea>
+  <div id="outputText" class="output"></div>
+</div>
+
+<div class="buttons">
+  <button id="copyBtn">コピー</button>
+  <button id="clearBtn">リセット</button>
+  <button id="exitBtn">閉じる</button>
+</div>
+
+<script>
+function convertText(text) {
+  let result = "30000000 109CED18\n10000000 50000000\n";
+  let lenHex = ((text.length * 4 + 4 + 65536).toString(16)).toUpperCase().padStart(5, '0').substring(1,5);
+  result += "0110" + lenHex + " 00000050\n";
+
+  let i = 0;
+  for (; i < text.length; i++) {
+    let code = text.charCodeAt(i);
+    let hex = code.toString(16).padStart(4, '0').toUpperCase();
+    result += hex;
+    if ((i + 1) % 4 === 0) result += "\n";
+    else if ((i + 1) % 2 === 0) result += " ";
+  }
+
+  if ((i + 1) % 4 === 3) result += "000000FF";
+  else if ((i + 1) % 4 === 2) result += "0000 000000FF";
+  else if ((i + 1) % 4 === 1) result += "00000000 000000FF";
+  else if ((i + 1) % 4 === 0) result += "0000\n00000000 000000FF";
+
+  return result;
+}
+
+const input = document.getElementById("inputText");
+const output = document.getElementById("outputText");
+const copyBtn = document.getElementById("copyBtn");
+const clearBtn = document.getElementById("clearBtn");
+const exitBtn = document.getElementById("exitBtn");
+
+input.addEventListener("input", () => {
+  output.textContent = convertText(input.value);
+});
+
+copyBtn.addEventListener("click", () => {
+  navigator.clipboard.writeText(output.textContent);
+  copyBtn.textContent = "コピー済み！";
+  setTimeout(() => copyBtn.textContent = "コピー", 1500);
+});
+
+clearBtn.addEventListener("click", () => {
+  input.value = "";
+  output.textContent = "";
+});
+
+exitBtn.addEventListener("click", () => {
+  if (confirm("タブを閉じますか？")) window.close();
+});
+</script>
+</body>
+</html>

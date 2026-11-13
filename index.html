@@ -59,19 +59,21 @@
             transition: transform 0.2s, opacity 0.2s, box-shadow 0.3s;
             box-shadow: 0 0 12px rgba(37, 99, 235, 0.3); /* Default blue glow */
         }
-        body.dark-mode .sns-link.instagram { box-shadow: 0 0 12px rgba(255, 176, 85, 0.3); }
         body.dark-mode .sns-link.greeen { box-shadow: 0 0 12px rgba(0, 255, 55, 0.3); }
+        body.dark-mode .sns-link.proxy { box-shadow: 0 0 12px rgba(17, 0, 255, 0.3); }
         body.dark-mode .sns-link.cinoclient { box-shadow: 0 0 12px rgba(255, 255, 0, 0.3); }
         body.dark-mode .sns-link.lameclient { box-shadow: 0 0 12px rgba(191, 64, 255, 0.3); }
+        body.dark-mode .sns-link.pinkdiamond { box-shadow: 0 0 12px rgba(227, 113, 255, 0.3); }
 
         body.dark-mode .sns-link:hover {
             opacity: 1;
             box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
         }
-        body.dark-mode .sns-link.instagram:hover { box-shadow: 0 0 20px rgba(255, 176, 85, 0.6); }
         body.dark-mode .sns-link.greeen:hover { box-shadow: 0 0 20px rgba(0, 255, 55, 0.6); }
+        body.dark-mode .sns-link.proxy:hover { box-shadow: 0 0 20px rgba(4, 0, 255, 0.6); }
         body.dark-mode .sns-link.cinoclient:hover { box-shadow: 0 0 20px rgba(255, 255, 0, 0.6); }
         body.dark-mode .sns-link.lameclient:hover { box-shadow: 0 0 20px rgba(191, 64, 255, 0.6); }
+        body.dark-mode .sns-link.pinkdiamond:hover { box-shadow: 0 0 20px rgba(227, 113, 255, 0.6); }
 
         @keyframes neon-pulse {
             0%, 100% {
@@ -368,10 +370,11 @@
             opacity: 0.9;
         }
 
-        .sns-link.instagram { background: #ffb055; }
         .sns-link.greeen { background: #00ff37; }
+        .sns-link.proxy { background: #1100ff; }
         .sns-link.cinoclient { background: #ffff00; color: #00bfff; }
         .sns-link.lameclient { background: #bf40ff; }
+        .sns-link.pinkdiamond { background: #e371ff; }
 
         /* Tags */
         .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
@@ -475,7 +478,9 @@
             <div style="display: flex; align-items: center; gap: 1.5rem;">
                 <ul>
                     <li><a href="#home">Home</a></li>
+                    <li><a href="#client">Client</a></li>
                     <li><a href="#projects">Projects</a></li>
+                    <li><a href="#proxy">Tools</a></li>
                     <!-- <li><a href="#hobbies">Hobbies</a></li>
                     <li><a href="#artists">Artists</a></li>
                     <li><a href="#contact">Contact</a></li> -->
@@ -497,25 +502,15 @@
             <h1>なゆ</h1>
             <span class="job-title">エンジニア / デザイナー</span>
             <p>観光や旅、ものづくりを愛するクリエイター</p>
-            <strong>MBTI:</strong> INFJ-A / <strong>Discord:</strong> nayu_hime<br>
+            <strong>MBTI:</strong> INFJ-A / <strong>Discord:</strong> yu_cra<br>
         </div>
     </header>
 
     <main class="container">
 
-        <section id="projects" class="reveal">
-            <h2>Projects & Tools</h2>
+        <section id="client" class="reveal">
+            <h2>Client</h2>
             <div class="grid project-grid">
-                <div class="card project-card" data-splash-color="#00ff37">
-                    <div class="project-icon">
-                        <img src="logo/pngconvic.png" alt="pngConverter" draggable="false">
-                    </div>
-                    <div class="project-info">
-                        <h3>pngConverter</h3>
-                        <p>画像を素早く変換するシンプルで強力なツールです。ブラウザ上で完結するため安全に使用できます。</p>
-                        <a href="https://yj-requin.github.io/ImageConverter/" class="sns-link greeen" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">変換サイトへ飛ぶ</a>
-                    </div>
-                </div>
 
                 <div class="card project-card" data-splash-color="#ffff00">
                     <div class="project-icon">
@@ -524,14 +519,11 @@
                     <div class="project-info">
                         <h3>CinoClient</h3>
                         <p>
-                            他のクライアントより軽量化、操作性よく使いやすいようなクライアントを目指している。<br>
+                            他のクライアントより軽量化でオリジナル<br>
                             UIに凝っており、アイテムに関するクライアントでは最強である。<br>
                             戦闘系はそんなに入っておらず、RPGやワールドの手助けなどに向いてます。<br>
-                            他のクライアントと互換性はほとんどなく、同時に起動することができます。<br>
-                            AryaClient以外となら起動できます。<br>
                         </p>
                         <a href="./Client/CinoClient/" class="sns-link cinoclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
-                        <!-- <a class="option" href="./Client/CinoClient/">CinoClient</a> -->
                     </div>
                 </div>
 
@@ -545,7 +537,7 @@
                             PinkDiamondの拡張版です。<br>
                             RPG制作に向いてます。<br>
                         </p>
-                        <a href="https://yj-requin.github.io/CinopLus/" class="sns-link cinoplus" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
+                        <a href="./Client/CinopLus/" class="sns-link cinoplus" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
                     </div>
                 </div>
 
@@ -557,11 +549,72 @@
                         <h3>LameClient</h3>
                         <p>
                             フリー版がリリースされました。<br>
+                            ※わからないモジュールは詳細書いてません<br>
                         </p>
-                        <a href="https://yj-requin.github.io/LameClient/" class="sns-link lameclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
+                        <a href="./Client/LameClient/" class="sns-link lameclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
                     </div>
                 </div>
 
+                <div class="card project-card" data-splash-color="#ffff00">
+                    <div class="project-icon">
+                        <img src="logo/PinkDiamondIco.png" alt="PinkDiamond" draggable="false">
+                    </div>
+                    <div class="project-info">
+                        <h3>PinkDiamond</h3>
+                        <p>
+                            OpenDiamondがリリースされました。<br>
+                            元のPinkDiamondの状態で公開しております。<br>
+                            サイトはパソコン版と全バージョン対応のものを公開しています<br>
+                        </p>
+                        <a href="./Client/PinkDiamond/" class="sns-link pinkdiamond" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
+                    </div>
+                </div>
+
+                <!-- <div class="card project-card" data-splash-color="#ffff00">
+                    <div class="project-icon">
+                        <img src="logo/LancelotIco.png" alt="Lancelot" draggable="false">
+                    </div>
+                    <div class="project-info">
+                        <h3>Lancelot</h3>
+                        <p>
+                            フリー版がリリースされました。<br>
+                            ※わからないモジュールは詳細書いてません<br>
+                        </p>
+                        <a href="./Client/Lancelot/" class="sns-link lameclient" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">説明サイトへ飛ぶ</a>
+                    </div>
+                </div> -->
+
+            </div>
+        </section>
+
+        <section id="projects" class="reveal">
+            <h2>Client</h2>
+            <div class="grid project-grid">
+                <div class="card project-card" data-splash-color="#00ff37">
+                    <div class="project-icon">
+                        <img src="logo/pngconvic.png" alt="pngConverter" draggable="false">
+                    </div>
+                    <div class="project-info">
+                        <h3>pngConverter</h3>
+                        <p>画像を素早く変換するシンプルで強力なツールです。ブラウザ上で完結するため安全に使用できます。</p>
+                        <a href="./Projects/ImageConverter/" class="sns-link greeen" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">変換サイトへ飛ぶ</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="proxy" class="reveal">
+            <h2>Tools</h2>
+            <div class="grid project-grid">
+                <div class="card project-card" data-splash-color="#0055ff">
+                    <div class="project-icon">
+                        <img src="logo/pngconvic.png" alt="pngConverter" draggable="false">
+                    </div>
+                    <div class="project-info">
+                        <p>WiiU関連の作ったツールたち</p>
+                        <a href="./Proxy/" class="sns-link proxy" style="display: inline-block; width: auto; padding: 0.5rem 1.2rem;">置き場へ飛ぶ</a>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -620,7 +673,7 @@
     <footer>
         <div class="container">
             <p>読んでくれてありがとう！</p>
-            <p>© 2024 なゆ</p>
+            <p>© 2017 - 2026 なゆ</p>
         </div>
     </footer>
     
@@ -730,58 +783,49 @@
         });
 
         // LameClient Password Logic
-        const unlockLame = () => {
-            const pwInput = document.getElementById('yuis-password');
-            const authCard = document.getElementById('yuis-auth-card');
-            const projectCard = document.getElementById('yuis-project-card');
-            
-            // パスワードを '神田' に設定しています。自由に変更してください。
-            if (pwInput.value === 'Shinjuku' || pwInput.value === 'Tokyo') {
-                // クラッカー（パーティクル）演出の追加
-                const rect = authCard.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2 + window.scrollX;
-                const centerY = rect.top + rect.height / 2 + window.scrollY;
-                
-                const colors = ['#FFD700', '#FF69B4', '#00FFFF', '#7FFF00', '#FF4500', '#BF40FF'];
-                for (let i = 0; i < 40; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'neon-particle';
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-                    
-                    particle.style.backgroundColor = color;
-                    particle.style.boxShadow = `0 0 15px ${color}`;
-                    particle.style.width = '10px';
-                    particle.style.height = '10px';
-                    
-                    const angle = Math.random() * Math.PI * 2;
-                    const distance = 100 + Math.random() * 200; // 飛距離を長めに設定
-                    const dx = Math.cos(angle) * distance;
-                    const dy = Math.sin(angle) * distance;
-                    
-                    particle.style.left = centerX + 'px';
-                    particle.style.top = centerY + 'px';
-                    particle.style.setProperty('--dx', `${dx}px`);
-                    particle.style.setProperty('--dy', `${dy}px`);
-                    
-                    document.body.appendChild(particle);
-                    setTimeout(() => particle.remove(), 800);
-                }
-
-                authCard.style.display = 'none';
-                projectCard.style.display = 'flex';
-                projectCard.style.animation = 'fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards';
-            } else {
-                pwInput.classList.add('shake');
-                // アニメーションが終わったらクラスを削除（再度間違えた時に実行できるようにする）
-                setTimeout(() => {
-                    pwInput.classList.remove('shake');
-                }, 400);
-            }
-        };
-        document.getElementById('yuis-auth-btn')?.addEventListener('click', unlockame);
-        document.getElementById('yuis-password')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') unlockame();
-        });
+        // const unlockLame = () => {
+        //     const pwInput = document.getElementById('yuis-password');
+        //     const authCard = document.getElementById('yuis-auth-card');
+        //     const projectCard = document.getElementById('yuis-project-card');
+        //     if (pwInput.value === 'Shinjuku' || pwInput.value === 'Tokyo') {
+        //         const rect = authCard.getBoundingClientRect();
+        //         const centerX = rect.left + rect.width / 2 + window.scrollX;
+        //         const centerY = rect.top + rect.height / 2 + window.scrollY;
+        //         const colors = ['#FFD700', '#FF69B4', '#00FFFF', '#7FFF00', '#FF4500', '#BF40FF'];
+        //         for (let i = 0; i < 40; i++) {
+        //             const particle = document.createElement('div');
+        //             particle.className = 'neon-particle';
+        //             const color = colors[Math.floor(Math.random() * colors.length)];
+        //             particle.style.backgroundColor = color;
+        //             particle.style.boxShadow = `0 0 15px ${color}`;
+        //             particle.style.width = '10px';
+        //             particle.style.height = '10px';
+        //             const angle = Math.random() * Math.PI * 2;
+        //             const distance = 100 + Math.random() * 200; // 飛距離を長めに設定
+        //             const dx = Math.cos(angle) * distance;
+        //             const dy = Math.sin(angle) * distance;
+        //             particle.style.left = centerX + 'px';
+        //             particle.style.top = centerY + 'px';
+        //             particle.style.setProperty('--dx', `${dx}px`);
+        //             particle.style.setProperty('--dy', `${dy}px`);
+        //             document.body.appendChild(particle);
+        //             setTimeout(() => particle.remove(), 800);
+        //         }
+        //         authCard.style.display = 'none';
+        //         projectCard.style.display = 'flex';
+        //         projectCard.style.animation = 'fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards';
+        //     } else {
+        //         pwInput.classList.add('shake');
+        //         // アニメーションが終わったらクラスを削除（再度間違えた時に実行できるようにする）
+        //         setTimeout(() => {
+        //             pwInput.classList.remove('shake');
+        //         }, 400);
+        //     }
+        // };
+        // document.getElementById('yuis-auth-btn')?.addEventListener('click', unlockame);
+        // document.getElementById('yuis-password')?.addEventListener('keypress', (e) => {
+        //     if (e.key === 'Enter') unlockame();
+        // });
 
         // 右クリックを完全に禁止する（画像以外も含む）
         document.addEventListener('contextmenu', (e) => {

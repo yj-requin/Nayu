@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+  
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ちのサイト置き場</title>
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #07111f;
+    --surface: #0d1b2d;
+    --surface-2: #12243a;
+    --text: #edf5ff;
+    --muted: #9bb0c9;
+    --accent: #45a5ff;
+    --accent-2: #1768d1;
+    --line: rgba(115, 174, 235, .2);
+    --glow: rgba(43, 139, 255, .16);
+  }
+
+  body[data-theme="calm"] {
+    color-scheme: light;
+    --bg: #f8f7fc;
+    --surface: #ffffff;
+    --surface-2: #fff0f7;
+    --text: #343247;
+    --muted: #827d96;
+    --accent: #e58bb9;
+    --accent-2: #78cbd8;
+    --line: rgba(190, 151, 190, .25);
+    --glow: rgba(231, 166, 204, .17);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 34px clamp(20px, 6vw, 76px) 70px;
+    background:
+      radial-gradient(ellipse at 12% 0%, var(--glow), transparent 38%),
+      var(--bg);
+    color: var(--text);
+    font-family: Inter, "Segoe UI", "Noto Sans JP", sans-serif;
+    transition: background .25s, color .25s;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 14px;
+    z-index: 10;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 0 42px;
+  }
+
+  .nav, .theme-switch {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 28px rgba(0,0,0,.08);
+  }
+
+  .nav a, .theme-switch button {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 15px;
+    border: 0;
+    border-radius: 11px;
+    color: var(--muted);
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .18s ease;
+  }
+
+  .nav a:hover, .theme-switch button:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+
+  .theme-switch button[aria-pressed="true"] {
+    color: white;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+
+  main { max-width: 900px; margin: 0 auto; }
+  .section {
+    scroll-margin-top: 100px;
+    margin: 0 0 62px;
+    padding: 28px 32px 32px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
+    box-shadow: 0 18px 45px rgba(0,0,0,.07);
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 0 0 24px;
+    font-size: clamp(34px, 5vw, 48px);
+    font-weight: 750;
+    letter-spacing: -.04em;
+  }
+
+  .section-heading::before {
+    content: "";
+    width: 5px;
+    height: 38px;
+    border-radius: 9px;
+    background: linear-gradient(var(--accent), var(--accent-2));
+  }
+
+  .items {
+    display: grid;
+    gap: 10px;
+    padding-left: clamp(12px, 5vw, 56px);
+  }
+
+  .option {
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 14px;
+    border-radius: 10px;
+    color: var(--text);
+    font-size: clamp(21px, 3.4vw, 30px);
+    font-weight: 550;
+    text-decoration: none;
+    transition: .18s ease;
+  }
+
+  .option::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--glow);
+  }
+
+  .option:hover {
+    color: var(--accent);
+    background: var(--surface-2);
+    transform: translateX(5px);
+  }
+
+  .subgroup { display: grid; gap: 7px; margin: 4px 0 16px; }
+  .subgroup-title {
+    padding: 3px 14px;
+    color: var(--accent);
+    font-size: clamp(22px, 3.4vw, 29px);
+    font-weight: 700;
+  }
+  .subgroup .option { margin-left: 34px; }
+
+  @media (max-width: 620px) {
+    body { padding: 18px 14px 40px; }
+    .topbar { position: static; justify-content: center; margin-bottom: 25px; }
+    .nav, .theme-switch { max-width: 100%; flex-wrap: wrap; justify-content: center; }
+    .nav a, .theme-switch button { padding: 0 11px; }
+    .section { padding: 22px 16px 25px; margin-bottom: 28px; border-radius: 17px; }
+    .items { padding-left: 8px; }
+    .subgroup .option { margin-left: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition-duration: .01ms !important; }
+  }
+</style>
+
+</head>
+<body data-theme="blue">
+  <header class="topbar">
+    <nav class="nav" aria-label="カテゴリ移動">
+      <a href="#main">Main</a>
+      <a href="#client">Client</a>
+      <a href="#skin">Skin</a>
+      <a href="#editor">Editor</a>
+      <a href="#code">Code</a>
+      <a href="#analysis">Analysis</a>
+      <a href="#dlsite">DLsite</a>
+    </nav>
+    <div class="theme-switch" aria-label="テーマ切り替え">
+      <button type="button" data-set-theme="calm" aria-pressed="true">Calm</button>
+      <button type="button" data-set-theme="blue" aria-pressed="false">Blue</button>
+    </div>
+  </header>
+
+  <main>
+    
+    <section class="section" id="main">
+      <h1 class="section-heading">Main:メイン</h1>
+      <div class="items">
+        <a class="option" href="https://yj-requin.github.io/Nayu/">メインサイト</a>
+      </div>
+    </section>
+
+    <section class="section" id="client">
+      <h1 class="section-heading">Client:クライアント</h1>
+      <div class="items">
+        <h3>
+          クライアントの説明はメインサイトから見れます。<br>
+        </h3>
+        <!-- <a class="option" href="./Client/CinoClient/">CinoClient</a>
+        <a class="option" href="./Client/CinopLus/">CinopLus</a>
+        <a class="option" href="./Client/Lancelot/">Lancelot</a>
+        <a class="option" href="./Client/LameClient/">LameClient</a>
+        <a class="option" href="./Client/PinkDiamond/">PinkDiamond</a> -->
+
+        <h4>
+          About<br>
+          CinoClient: 完全自作な為、信頼してる人限定で配布しています。<br>
+          Lancelot: 身内で作成したプロジェクトな為、一般的には公開していません。<br>
+          CinopLus: OpenDを元に追加や改良したクライアント<br>
+          LameClient: ベースがCinoClientでどのクライアントよりもチートが多いです。<br>
+          PinkDiamond: katope氏が作成した高度なmodクライアント<br>
+        </h4>
+      </div>
+    </section>
+
+    <section class="section" id="skin">
+      <h1 class="section-heading">Skin:スキン</h1>
+      <div class="items">
+        <a class="option" href="./Skin/SkinStealer/">SkinStealer</a>
+        <!-- <a class="option" href="./Skin/BinaryStealer/">BinaryStealer</a> -->
+        <!-- <a class="option" href="./Skin/PCKStealer/">PCKStealer</a> -->
+        <a class="option" href="./Skin/JsonConverter/">JsonConverter</a>
+        <a class="option" href="./Skin/ANIMChange/">ANIMChange</a>
+      </div>
+    </section>
+
+    <section class="section" id="editor">
+      <h1 class="section-heading">Editor:編集</h1>
+      <div class="items">
+        <a class="option" href="./Editor/Hexadecimal/">Hexadecimal</a>
+      </div>
+    </section>
+
+    <section class="section" id="code">
+      <h1 class="section-heading">Code:コード</h1>
+      <div class="items">
+        <div class="subgroup">
+          <span class="subgroup-title">:Create</span>
+          <a class="option" href="./Code/Create/IdGen/">ID変更コード作成</a>
+          <a class="option" href="./Code/Create/LootTable/">宝箱コード生成</a>
+        </div>
+        <div class="subgroup">
+          <span class="subgroup-title">:Cafe</span>
+          <a class="option" href="./Code/Cafe/Norm/">正規化</a>
+        </div>
+        <div class="subgroup">
+          <span class="subgroup-title">:Assembly</span>
+          <a class="option" href="./Code/Assembly/Norm/">正規化</a>
+          <a class="option" href="./Code/Assembly/Obfuscation/">難読化</a>
+        </div>
+        <div class="subgroup">
+          <span class="subgroup-title">:Other</span>
+          <a class="option" href="./Code/Other/ImageToBinary/">Image To Binary</a>
+        </div>
+        <div class="subgroup">
+          <span class="subgroup-title">:Programming</span>
+          <a class="option" href="./Code/Programming/NBT/">NBT To C++</a>
+        </div>
+      </div>
+    </section>
+    
+    <section class="section" id="analysis">
+      <h1 class="section-heading">Analysis:解析</h1>
+      <div class="items">
+        <a class="option" href="./Analysis/gctu/">gctuのコード抽出</a>
+        <a class="option" href="./Analysis/asm/bl/">bl命令使用の場所だけを特定してコードを解析する</a>
+      </div>
+    </section>
+
+    <section class="section" id="dlsite">
+      <h1 class="section-heading">DLsite:ダウンロードサイト</h1>
+      <div class="items">
+        <!-- <a class="option" href="./release/.../">...</a> -->
+      </div>
+    </section>
+    
+
+  </main>
+
+<script>
+  const themeButtons = document.querySelectorAll("[data-set-theme]");
+  const savedTheme = localStorage.getItem("tool-index-theme");
+  const initialTheme = savedTheme === "calm" ? "calm" : "blue";
+
+  function setTheme(theme) {
+    document.body.dataset.theme = theme;
+    themeButtons.forEach(button => {
+      button.setAttribute("aria-pressed", String(button.dataset.setTheme === theme));
+    });
+    localStorage.setItem("tool-index-theme", theme);
+  }
+
+  themeButtons.forEach(button => {
+    button.addEventListener("click", () => setTheme(button.dataset.setTheme));
+  });
+
+  setTheme(initialTheme);
+</script>
+</body>
+</html>

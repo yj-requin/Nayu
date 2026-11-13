@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>PCK CSM完全解析ツール</title>
+<style>
+body {
+    background:#111;
+    color:#eee;
+    font-family:monospace;
+}
+h1 { color:#0f0; }
+button {
+    background:#222;
+    color:#0f0;
+    border:1px solid #0f0;
+    padding:8px;
+    margin:4px;
+}
+pre {
+    background:#000;
+    padding:10px;
+    max-height:300px;
+    overflow:auto;
+}
+</style>
+</head>
+<body>
+
+<h1>PCK CSM完全解析モード</h1>
+<input type="file" id="fileInput">
+<br>
+<button onclick="analyze()">解析開始</button>
+
+<h2>CSM抽出ログ</h2>
+<pre id="log"></pre>
+
+<h2>CSM ASCII表示</h2>
+<pre id="ascii"></pre>
+
+<h2>CSM HEX表示</h2>
+<pre id="hex"></pre>
+
+<script>
+function analyze() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const buffer = new Uint8Array(e.target.result);
+        const log = document.getElementById("log");
+        const asciiView = document.getElementById("ascii");
+        const hexView = document.getElementById("hex");
+
+        log.textContent = "";
+        asciiView.textContent = "";
+        hexView.textContent = "";
+
+        const pngEndSignature = [0x49,0x45,0x4E,0x44,0xAE,0x42,0x60,0x82];
+        let positions = [];
+
+        // IEND全検索
+        for (let i=0; i<buffer.length-8; i++) {
+            let match = true;
+            for (let j=0; j<8; j++) {
+                if (buffer[i+j] !== pngEndSignature[j]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                positions.push(i+8);
+            }
+        }
+
+        log.textContent += "PNG終了検出数: " + positions.length + "\n";
+
+        if (positions.length === 0) {
+            log.textContent += "PNGが見つかりません\n";
+            return;
+        }
+
+        // 最初のPNG直後から次のIDSまでをCSM候補とする
+        let start = positions[0];
+        let end = buffer.length;
+
+        // IDS検索
+        const idsString = "IDS_";
+        for (let i=start; i<buffer.length-4; i++) {
+            if (String.fromCharCode(
+                buffer[i],buffer[i+1],buffer[i+2],buffer[i+3]
+            ) === idsString) {
+                end = i;
+                break;
+            }
+        }
+
+        const csmData = buffer.slice(start, end);
+
+        log.textContent += "CSM候補サイズ: " + csmData.length + " bytes\n";
+
+        // ASCII表示
+        let ascii = "";
+        for (let i=0; i<csmData.length; i++) {
+            let c = csmData[i];
+            if (c >= 32 && c <= 126) ascii += String.fromCharCode(c);
+            else ascii += ".";
+        }
+        asciiView.textContent = ascii;
+
+        // HEX表示
+        let hex = "";
+        for (let i=0; i<csmData.length; i++) {
+            hex += csmData[i].toString(16).padStart(2,"0") + " ";
+            if ((i+1)%16===0) hex += "\n";
+        }
+        hexView.textContent = hex;
+
+        // 保存
+        const blob = new Blob([csmData]);
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "extracted.txt";
+        a.click();
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCK Extractor</title>
+<style>
+body{
+    background:#ffffff;
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    margin:20px;
+}
+.card{
+    background:#f5f5f7;
+    padding:20px;
+    border-radius:14px;
+    margin-bottom:20px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.06);
+}
+button{
+    padding:12px 18px;
+    border:none;
+    border-radius:10px;
+    background:#007aff;
+    color:white;
+    font-size:15px;
+    margin-top:12px;
+}
+input{
+    margin-top:10px;
+}
+pre{
+    background:#fff;
+    padding:10px;
+    overflow:auto;
+    font-size:12px;
+    border-radius:10px;
+    max-height:250px;
+}
+.pngItem{
+    background:#fff;
+    padding:10px;
+    border-radius:12px;
+    margin-bottom:15px;
+    text-align:center;
+}
+.pngItem img{
+    width:128px;
+    image-rendering:pixelated;
+    border-radius:8px;
+    margin-bottom:8px;
+}
+</style>
+</head>
+<body>
+
+<h2>PCK Extractor</h2>
+
+<div class="card">
+<h3>PCK読み込み</h3>
+<input type="file" id="pckInput" accept=".pck">
+<br>
+<button onclick="analyzePCK()">解析</button>
+</div>
+
+<div class="card">
+<h3>抽出PNG（画像表示）</h3>
+<div id="pngList"></div>
+</div>
+
+<div class="card">
+<h3>文字列一覧</h3>
+<pre id="stringOutput"></pre>
+</div>
+
+<div class="card">
+<h3>16進ダンプ</h3>
+<pre id="hexOutput"></pre>
+</div>
+
+<script>
+
+// ---------- PCK解析 ----------
+async function analyzePCK(){
+    const file = document.getElementById('pckInput').files[0];
+    if(!file){
+        alert("PCKを選択してください");
+        return;
+    }
+
+    const buffer = new Uint8Array(await file.arrayBuffer());
+
+    extractPNG(buffer);
+    extractStrings(buffer);
+    hexDump(buffer);
+}
+
+// ---------- PNG抽出 ----------
+function extractPNG(data){
+    const pngList = document.getElementById("pngList");
+    pngList.innerHTML = "";
+
+    const PNG_START = [0x89,0x50,0x4E,0x47];
+    const PNG_END = [0x49,0x45,0x4E,0x44];
+
+    let count = 0;
+
+    for(let i=0;i<data.length-8;i++){
+        if(matchBytes(data,i,PNG_START)){
+            let start = i;
+
+            for(let j=i;j<data.length-4;j++){
+                if(matchBytes(data,j,PNG_END)){
+                    let end = j+8; // IEND + CRC
+                    let png = data.slice(start,end);
+                    displayPNG(png, count);
+                    count++;
+                    i = end;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+function displayPNG(data, index){
+    const blob = new Blob([data], {type:"image/png"});
+    const url = URL.createObjectURL(blob);
+
+    const container = document.createElement("div");
+    container.className = "pngItem";
+
+    const img = document.createElement("img");
+    img.src = url;
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "dlcskinSteal_" + index + ".png";
+    a.textContent = "dlcskinSteal_" + index + ".png";
+
+    container.appendChild(img);
+    container.appendChild(document.createElement("br"));
+    container.appendChild(a);
+
+    document.getElementById("pngList").appendChild(container);
+}
+
+function matchBytes(data, index, pattern){
+    for(let i=0;i<pattern.length;i++){
+        if(data[index+i] !== pattern[i]) return false;
+    }
+    return true;
+}
+
+// ---------- 文字列抽出 ----------
+function extractStrings(data){
+    let result = "";
+    let current = "";
+
+    for(let i=0;i<data.length;i++){
+        if(data[i] >= 32 && data[i] <= 126){
+            current += String.fromCharCode(data[i]);
+        }else{
+            if(current.length >= 4){
+                result += current + "\n";
+            }
+            current = "";
+        }
+    }
+
+    document.getElementById("stringOutput").textContent = result;
+}
+
+// ---------- 16進ダンプ ----------
+function hexDump(data){
+    let output = "";
+    for(let i=0;i<data.length;i+=16){
+        let row = "";
+        for(let j=0;j<16 && i+j<data.length;j++){
+            row += data[i+j].toString(16).padStart(2,"0") + " ";
+        }
+        output += row + "\n";
+    }
+    document.getElementById("hexOutput").textContent = output;
+}
+
+</script>
+</body>
+</html>

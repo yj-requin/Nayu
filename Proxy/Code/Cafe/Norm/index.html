@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>CafeToNomalize</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root{--bg:#071022;--panel:#0b1220;--muted:#9aa4b2;--card:#0e2438}
+  body{background:linear-gradient(180deg,#04101b,#071022);color:#e6eef6;font-family:ui-monospace,Consolas,monospace;padding:20px;margin:0}
+  h1{font-size:18px;color:#64ffda;margin:0 0 8px}
+  .wrap{max-width:1100px;margin:0 auto}
+  textarea, input {font-family:inherit;font-size:13px;line-height:1.35;border:0;border-radius:8px;padding:10px;background:#071826;color:#e6eef6}
+  textarea {resize:vertical}
+  .controls{display:flex;gap:8px;align-items:center;margin:10px 0}
+  button{background:#18324d;border:0;color:#e6eef6;padding:8px 12px;border-radius:8px;cursor:pointer}
+  button:hover{filter:brightness(1.08)}
+  .section{display:flex;gap:16px;flex-wrap:wrap}
+  .box{background:var(--card);padding:10px;border-radius:10px;width:360px;display:flex;flex-direction:column;align-items:stretch}
+  .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .count{color:var(--muted);font-size:12px;margin-right:8px}
+  label{color:var(--muted);font-size:13px;display:block;margin-bottom:6px}
+  .note{color:var(--muted);font-size:12px;margin-top:8px}
+  @media(max-width:1100px){ .box{width:32vw; min-width:300px} }
+  @media(max-width:760px){ .section{flex-direction:column;align-items:stretch} .box{width:100%} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Cafe正規化</h1>
+    <div>
+      <label>入力テキスト</label>
+      <textarea id="input" rows="8" placeholder=""></textarea>
+      <div class="controls">
+        <button id="pasteBtn">貼り付け</button>
+        <button id="convertBtn">変換実行</button>
+        <button id="clearBtn">クリア</button>
+      </div>
+      <!-- <div class="note">
+        ルール: 左が <code>0110</code> で始まる行がトリガー → 右を Y として base = <code>0x00120000 + Y</code>、次行から左→右を順に4バイトずつ配置。右が <code>000000FF</code> の行は左だけ配置して終了。複数ブロック対応。
+      </div> -->
+    </div>
+
+    <div class="section" style="margin-top:16px">
+      <div class="box">
+        <div class="header">
+          <strong>直接変換</strong>
+          <div>
+            <span id="count1" class="count">0行</span>
+            <button id="copy1">コピー</button>
+          </div>
+        </div>
+        <textarea id="output1" rows="14" readonly></textarea>
+      </div>
+
+      <div class="box">
+        <div class="header">
+          <strong>+整理</strong>
+          <div>
+            <span id="count2" class="count">0行</span>
+            <button id="copy2">コピー</button>
+          </div>
+        </div>
+        <textarea id="output2" rows="14" readonly></textarea>
+      </div>
+
+      <div class="box">
+        <div class="header">
+          <strong>+短縮化</strong>
+          <div>
+            <span id="count3" class="count">0行</span>
+            <button id="copy3">コピー</button>
+          </div>
+        </div>
+        <textarea id="output3" rows="14" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+<script>
+const inputEl = document.getElementById('input');
+const out1 = document.getElementById('output1');
+const out2 = document.getElementById('output2');
+const out3 = document.getElementById('output3');
+const count1 = document.getElementById('count1');
+const count2 = document.getElementById('count2');
+const count3 = document.getElementById('count3');
+
+document.getElementById('pasteBtn').addEventListener('click', async () => {
+  try { inputEl.value = await navigator.clipboard.readText(); }
+  catch { alert('クリップボードの読み取りに失敗しました。'); }
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  inputEl.value=''; out1.value=''; out2.value=''; out3.value='';
+  count1.textContent='0行'; count2.textContent='0行'; count3.textContent='0行';
+});
+
+function expandOnly(lines) {
+  const result = [];
+  let expanding = false;
+  let baseAddr = 0;
+  let offset = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i].trim();
+    if (!raw) continue;
+    const parts = raw.split(/\s+/).filter(Boolean);
+    if (parts.length < 2) continue;
+    const left = parts[0].toUpperCase();
+    const right = parts[1].toUpperCase();
+
+    if (!expanding && left.startsWith('0110')) {
+      const Y = parseInt(right, 16) || 0;
+      baseAddr = 0x00120000 + Y;
+      offset = 0;
+      expanding = true;
+      continue;
+    }
+
+    if (expanding) {
+      const addr1 = baseAddr + offset;
+      result.push(hex8(addr1) + ' ' + left);
+      offset += 4;
+
+      if (right === '000000FF') {
+        expanding = false;
+        continue; // skip writing right side
+      }
+
+      const addr2 = baseAddr + offset;
+      result.push(hex8(addr2) + ' ' + right);
+      offset += 4;
+      continue;
+    }
+
+    result.push(left + ' ' + right);
+  }
+  return result;
+}
+
+function hex8(n){return (n>>>0).toString(16).toUpperCase().padStart(8,'0');}
+
+function sortAndDedup(lines){
+  const map={};
+  for(const line of lines){
+    const parts=line.trim().split(/\s+/);
+    if(parts.length<2)continue;
+    map[parts[0].toUpperCase()]=parts[1].toUpperCase();
+  }
+  return Object.keys(map)
+    .sort((a,b)=>parseInt(a,16)-parseInt(b,16))
+    .map(a=>`${a} ${map[a]}`);
+}
+
+document.getElementById('convertBtn').addEventListener('click',()=>{
+  const rawLines=inputEl.value.split(/\r?\n/);
+  const expanded=expandOnly(rawLines);
+  out1.value=expanded.join('\n');
+  count1.textContent=expanded.length+'行';
+
+  const deduped=sortAndDedup(expanded);
+  out2.value=deduped.join('\n');
+  count2.textContent=deduped.length+'行';
+
+  const filtered=deduped.filter(l=>{
+    const v=(l.split(/\s+/)[1]||'').toUpperCase();
+    return v!=='00000000';
+  });
+  out3.value=filtered.join('\n');
+  count3.textContent=filtered.length+'行';
+});
+
+async function copyText(txt){
+  try{await navigator.clipboard.writeText(txt);return true;}
+  catch{return false;}
+}
+document.getElementById('copy1').addEventListener('click',async()=>{
+  if(!out1.value)return alert('出力①が空です。');
+  if(await copyText(out1.value))alert('出力①をコピーしました。');
+});
+document.getElementById('copy2').addEventListener('click',async()=>{
+  if(!out2.value)return alert('出力②が空です。');
+  if(await copyText(out2.value))alert('出力②をコピーしました。');
+});
+document.getElementById('copy3').addEventListener('click',async()=>{
+  if(!out3.value)return alert('出力③が空です。');
+  if(await copyText(out3.value))alert('出力③をコピーしました。');
+});
+</script>
+</body>
+</html>

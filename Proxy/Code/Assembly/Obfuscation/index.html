@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>PPC Obfuscator</title>
+
+<style>
+body {
+    background: #fff;
+    font-family: sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px; /* ←中央に収まる */
+    height: 90vh;       /* ←少し小さく */
+    gap: 15px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.panel {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    color: #0368ff;
+    margin-bottom: 8px;
+}
+
+textarea {
+    flex: 1;
+    border: 2px solid #00ff9d;
+    border-radius: 10px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 14px;
+    background: #e3fce7;
+    resize: none;
+    line-height: 1.5;
+    min-height: 300px; /* ←最低サイズ */
+}
+
+.buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #0099ff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00ccff;
+}
+
+#loading {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #00a2ff;
+}
+</style>
+</head>
+<body>
+<div id="loading">処理中...</div>
+<div class="container">
+<div class="panel">
+    <h2>入力</h2>
+    <textarea id="input"></textarea>
+
+    <div class="buttons">
+        <button onclick="pasteText()">ペースト</button>
+        <button id="executeButton" onclick="conv()">実行 (Ctrl+Enter)</button>
+        <button id="cancelButton" onclick="cancelConv()" style="display:none;">キャンセル</button>
+    </div>
+</div>
+
+<div class="panel">
+    <h2>出力</h2>
+    <textarea id="out"></textarea>
+
+    <div class="buttons">
+        <button onclick="copyText()">コピー</button>
+    </div>
+</div>
+
+</div>
+
+<script>
+// 右クリックを禁止
+document.addEventListener('contextmenu', event => event.preventDefault());
+
+document.onkeydown = function (event) {
+    // Ctrl+Enterで実行
+    if (event.ctrlKey && event.key === 'Enter') {
+        conv();
+    }
+    // 開発者ツール関連のショートカット（F12, Ctrl+U, Ctrl+Shift+I/J/C）を無効化
+    if (
+        event.code === 'F12' ||
+        (event.ctrlKey && event.code === 'KeyU') ||
+        (event.ctrlKey && event.shiftKey && (event.code === 'KeyI' || event.code === 'KeyJ' || event.code === 'KeyC'))
+    ) {
+        event.preventDefault();
+    }
+};
+
+let currentWorker = null; // 現在実行中のWorkerを保持する変数
+let currentBlobUrl = null; // WorkerのBlob URLを保持する変数
+let funcs = [
+    { addr: "80000000", name: "example_func" }
+];
+
+function manualLowercase(s) {
+    return s.replace(/[A-Z]/g, ch => String.fromCharCode(ch.charCodeAt(0) | 32));
+}
+
+function manualUppercase(s) {
+    return s.replace(/[a-z]/g, ch => String.fromCharCode(ch.charCodeAt(0) & ~32));
+}
+
+function zeroPadding(NUM, LEN) {
+    return (Array(LEN).join('0') + NUM).slice(-LEN);
+}
+
+let labels = [];
+
+function conv() {
+    const loader = document.getElementById('loading');
+    const inputArea = document.getElementById('input');
+    const outputArea = document.getElementById('out');
+    const executeButton = document.getElementById('executeButton');
+    const cancelButton = document.getElementById('cancelButton');
+
+    executeButton.disabled = true; // 実行ボタンを無効化
+
+    loader.style.display = 'flex'; // Loadingを表示
+    loader.textContent = '処理中... 0%';
+
+    // Worker用コードを文字列として定義
+    const workerCode = `
+        onmessage = function(e) {
+            const { text } = e.data;
+            const opes = text.split("\\n");
+            const total = opes.length;
+            const result = [];
+            const batchSize = 500;
+            let labels = [];
+
+            function rand(max) { return Math.floor(Math.random() * max); }
+            function addlabel() {
+                let t = "_" + Math.floor(Math.random() * 0xffffffff);
+                labels.push(t);
+                return t;
+            }
+            function uselabel() {
+                let t = labels[0];
+                labels.shift();
+                return t;
+            }
+            function getN(t) { return t.trim().split(/[ ,]+/); }
+
+            for (let i = 0; i < total; i++) {
+                const line = opes[i];
+                const tokens = getN(line);
+
+                if (tokens.length !== 1) {
+                    if (Math.random() < 0.5 && i > 3) {
+                        const tr = Math.floor(Math.random() * 30);
+                        result.push("cmpl cr6, r" + tr + ", r" + tr);
+                        if (Math.random() < 0.05) result.push("addi r13, r13," + rand(0x1000));
+                        if (Math.random() < 0.05) result.push("subi r13, r13," + rand(0x1000));
+                        if (Math.random() < 0.05) result.push("mulli r13, r13," + rand(0x1000));
+                        if (Math.random() < 0.05) result.push("xori r13, r13," + rand(0x1000));
+                        if (Math.random() < 0.7 && labels.length > 0) result.push(uselabel() + ":");
+                        if (Math.random() < 0.7) result.push("bne cr6," + addlabel());
+                    }
+                    if (tokens[0] === "li") {
+                        const register = tokens[1];
+                        result.push("li " + register + "," + rand(0x8000));
+                    }
+                }
+                result.push(line);
+
+                if (i % batchSize === 0 && i > 0) {
+                    const percent = Math.round((i / total) * 100);
+                    postMessage({ type: 'progress', percent: percent });
+                }
+            }
+            for (const t of labels) result.push(t + ":");
+            postMessage({ type: 'done', result: result.join('\\n').toLowerCase() });
+        };
+    `;
+
+    // Blobを使用してWorkerを作成
+    const blob = new Blob([workerCode], { type: 'application/javascript' }); //
+    currentBlobUrl = URL.createObjectURL(blob); //
+    currentWorker = new Worker(currentBlobUrl); //
+
+    cancelButton.style.display = 'inline-block'; // キャンセルボタンを表示
+
+    // Workerからのメッセージ受信
+    currentWorker.onmessage = function(e) {
+        if (e.data.type === 'progress') {
+            loader.textContent = '処理中... ' + e.data.percent + '%';
+        } else if (e.data.type === 'done') {
+            outputArea.value = e.data.result;
+            loader.style.display = 'none';
+            cleanupWorker();
+        }
+    };
+
+    // エラーハンドリング
+    currentWorker.onerror = function(err) {
+        console.error("Worker error:", err);
+        loader.style.display = 'none';
+        cleanupWorker();
+    };
+
+    // 処理開始
+    currentWorker.postMessage({ text: inputArea.value });
+}
+
+function cleanupWorker() {
+    const executeButton = document.getElementById('executeButton');
+    const cancelButton = document.getElementById('cancelButton');
+
+    if (currentWorker) {
+        currentWorker.terminate(); // Workerを終了
+        currentWorker = null;
+    }
+    if (currentBlobUrl) {
+        URL.revokeObjectURL(currentBlobUrl); // メモリ解放
+        currentBlobUrl = null;
+    }
+    executeButton.disabled = false; // 実行ボタンを有効化
+    cancelButton.style.display = 'none'; // キャンセルボタンを非表示
+}
+
+function cancelConv() {
+    const loader = document.getElementById('loading');
+    loader.style.display = 'none'; // Loadingを非表示
+    cleanupWorker();
+}
+
+function rand(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function addlabel() {
+    let t = `_${Math.floor(Math.random() * 0xffffffff)}`;
+    labels.push(t);
+    return t;
+}
+
+function uselabel() {
+    let t = labels[0];
+    labels.shift();
+    return t;
+}
+
+function getN(t) {
+    return t.trim().split(/[ ,]+/);
+}
+
+// ペースト
+async function pasteText() {
+    try {
+        input.value = await navigator.clipboard.readText();
+    } catch {
+        alert("ペーストできませんでした（ブラウザ権限が必要）");
+    }
+}
+
+// コピー
+function copyText() {
+    navigator.clipboard.writeText(out.value);
+}
+</script>
+
+</body>
+</html>

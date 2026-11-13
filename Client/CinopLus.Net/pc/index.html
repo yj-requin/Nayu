@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CinopLus</title>
+
+<style>
+:root {
+    --accent-color: #9b9b9b;
+}
+
+/* アクセントカラー定義 */
+.accent-pink    { --accent-color: #9b9b9b; }
+.accent-blue    { --accent-color: #3498db; }
+.accent-green   { --accent-color: #2ecc71; }
+.accent-purple  { --accent-color: #9b59b6; }
+.accent-orange  { --accent-color: #e67e22; }
+.accent-red     { --accent-color: #e74c3c; }
+.accent-yellow  { --accent-color: #f1c40f; }
+.accent-cyan    { --accent-color: #1abc9c; }
+.accent-rainbow { --accent-color: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); }
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #7fa4d6;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* ================= サイドバー ================= */
+.sidebar {
+    width: 90px;
+    background: #4f6a8d;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+}
+
+/* ボタン */
+.menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-btn {
+    width: 100%;
+    height: 70px;
+    border: none;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center 10px;
+    background-size: 36px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 6px;
+}
+
+.menu-btn:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.menu-btn.active {
+    background-color: var(--accent-color);
+}
+
+.menu-label {
+    font-size: 9px;
+    color: white;
+    pointer-events: none;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* ======== ここで画像指定 ======== */
+.pinkdlogo { background-image: url("res/CinopLus_Logo.png"); background-size: 50px; background-position: center; }
+.combat    { background-image: url("res/Combat.png"); }
+.movement  { background-image: url("res/Movement.png"); }
+.render    { background-image: url("res/Render.png"); }
+.modmenu   { background-image: url("res/ModMenu.png"); }
+.item      { background-image: url("res/Item.png"); }
+.world     { background-image: url("res/World.png"); }
+.other     { background-image: url("res/Misc.png"); }
+.patch     { background-image: url("res/Patch.png"); }
+.server    { background-image: url("res/Server.png"); }
+.message   { background-image: url("res/Message.png"); }
+.player    { background-image: url("res/Player.png"); }
+.settings  { background-image: url("res/Settings.png"); } /* ← これ使う */
+
+/* ================= メイン ================= */
+.main {
+    flex: 1;
+    padding: 20px;
+}
+
+.panel {
+    background: #5e7796;
+    border-radius: 10px;
+    padding: 20px;
+    height: 100%;
+    color: white;
+    position: relative;
+}
+
+/* タブ */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: #3e4f63;
+    color: white;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: var(--accent-color);
+}
+
+/* 言語 */
+.lang button {
+    display: block;
+    margin-bottom: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.lang button.active::before {
+    content: "● ";
+    color: var(--accent-color);
+}
+
+/* --- input.html から移植した UI スタイル --- */
+
+/* サブタイトル */
+.subtitle {
+    opacity: 0.7;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* セクション */
+.section-title {
+    margin-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 15px;
+    margin-bottom: 10px;
+}
+
+/* ボタン */
+.btn {
+    background: var(--accent-color);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: white;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+/* 選択バー */
+.select-box {
+    display: inline-block;
+    background: #2e3c4f;
+    padding: 8px 15px;
+    border-radius: 8px;
+    min-width: 200px;
+}
+
+/* トグル */
+.toggle {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.switch {
+    width: 50px;
+    height: 26px;
+    background: #888;
+    border-radius: 20px;
+    position: relative;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.knob {
+    width: 22px;
+    height: 22px;
+    background: #ddd;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: 0.2s;
+}
+
+.switch.active {
+    background: var(--accent-color);
+}
+
+.switch.active .knob {
+    left: 26px;
+}
+
+/* --- theme.html から移植した UI スタイル --- */
+.row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.label {
+    width: 140px;
+}
+
+.desc {
+    margin-left: 10px;
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+.select-ui {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2f3f53;
+    border-radius: 10px;
+    padding: 10px 15px;
+    width: 260px;
+}
+
+.select-btn {
+    width: 30px;
+    height: 30px;
+    background: var(--accent-color);
+    border-radius: 8px;
+    position: relative;
+}
+
+.select-btn::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 9px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid white;
+}
+
+/* スライダー */
+.slider-wrap {
+    position: relative;
+    width: 320px;
+}
+
+.slider-wrap input {
+    width: 100%;
+    height: 10px;
+    border-radius: 10px;
+    background: #2f3f53;
+    appearance: none;
+    outline: none;
+}
+
+.slider-wrap input::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider-value {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent-color);
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    margin: 20px 0;
+}
+
+/* --- モジュール説明パネル --- */
+.main-layout { display: flex; height: calc(100% - 60px); gap: 20px; }
+.description-panel {
+    width: 240px;
+    background: rgba(0,0,0,0.15);
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-y: auto;
+}
+.desc-title { font-weight: bold; font-size: 18px; margin-bottom: 10px; color: var(--accent-color); }
+.desc-body { opacity: 0.9; }
+
+/* --- pinknet.html から移植した UI スタイル --- */
+.forum-header { background: #2f3f53; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; }
+.subtabs { display: flex; background: var(--accent-color); border-radius: 6px; overflow: hidden; margin-bottom: 15px; }
+.subtabs div { padding: 8px 15px; font-size: 13px; cursor: pointer; transition: 0.2s; }
+.subtabs div:hover { background: rgba(0,0,0,0.1); }
+.subtabs .right { margin-left: auto; display: flex; gap: 5px; }
+.forum-list { flex: 1; overflow-y: auto; margin-bottom: 15px; }
+.forum-item { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.item-title { font-size: 16px; font-weight: bold; }
+.item-meta { opacity: 0.6; font-size: 12px; }
+.forum-bottom { display: flex; gap: 10px; margin-top: auto; }
+.forum-input { flex: 1; background: #2f3f53; border: none; padding: 12px; border-radius: 8px; color: white; outline: none; }
+.forum-send { width: 50px; background: var(--accent-color); border: none; border-radius: 8px; cursor: pointer; color: white; font-size: 18px; }
+
+/* --- combat.html から移植した UI スタイル --- */
+.combat-grid { display: flex; gap: 20px; height: 100%; overflow-y: auto; padding-right: 5px; align-items: flex-start; }
+.combat-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+.combat-card { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 8px; }
+.combat-btn {
+    width: 100%; background: #6b87a8; border: none; border-radius: 10px; padding: 12px; color: white; cursor: pointer;
+    font-size: 13px; box-shadow: inset 0 -2px rgba(0,0,0,0.2); transition: 0.15s;
+}
+.combat-btn:hover { background: #7c99bb; }
+.combat-btn:active { transform: scale(0.97); }
+
+/* --- message.html から移植した UI スタイル --- */
+.input-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+}
+.message-input {
+    flex: 1;
+    background: #2f3f53;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+}
+.icon-btn {
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent-color);
+    cursor: pointer;
+    transition: 0.15s;
+    background-size: 24px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.icon-btn:hover { opacity: 0.9; }
+.btn-chat { background-image: url("res/Message.png"); }
+.btn-send { background-image: url("res/Send.png"); }
+
+/* --- プレイヤー情報スタイル --- */
+.player-info-row { display: flex; gap: 40px; padding: 10px 0; }
+.player-info-item { display: flex; flex-direction: column; }
+.player-info-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+.player-info-value { font-size: 18px; font-weight: bold; }
+body.white-theme .player-info-label { color: rgba(0,0,0,0.5); }
+
+/* --- ホワイトテーマ用スタイル --- */
+body.white-theme { background: #cbdcf0; }
+body.white-theme .sidebar { background: #a2b1c4; }
+body.white-theme .panel { background: #ffffff; color: #333; }
+body.white-theme .tab { background: #dee6f0; color: #555; }
+body.white-theme .tab.active { color: #fff; }
+body.white-theme .select-ui, 
+body.white-theme .select-box,
+body.white-theme .slider-wrap input { background: #eee; color: #333; }
+body.white-theme .section-title { border-top-color: rgba(0,0,0,0.1); color: #444; }
+body.white-theme .menu-label { color: #444; }
+body.white-theme .desc { color: #666; }
+body.white-theme .lang button { color: #333; }
+body.white-theme hr { border-top-color: rgba(0,0,0,0.1); }
+body.white-theme .message-input { background: #eee; color: #333; }
+
+/* ================= スマートフォン対応 ================= */
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body { min-width: 320px; }
+.container { min-height: 100vh; height: 100dvh; }
+.main { min-width: 0; }
+.panel { min-width: 0; min-height: 0; overflow: auto; }
+.main-layout { min-height: 0; }
+.description-panel { flex: 0 0 240px; }
+.row { flex-wrap: wrap; gap: 8px; }
+.label { flex: 0 0 140px; }
+.select-ui { max-width: 100%; }
+.slider-wrap { max-width: 100%; }
+.combat-grid { min-width: 0; }
+.combat-column { min-width: 0; }
+
+@media (max-width: 700px) {
+    .container {
+        height: 100dvh;
+        min-height: 100dvh;
+        flex-direction: column-reverse;
+    }
+    .sidebar {
+        width: 100%;
+        height: 68px;
+        flex: 0 0 68px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        justify-content: flex-start;
+    }
+    .menu {
+        flex-direction: row;
+        width: max-content;
+        min-width: 100%;
+    }
+    .menu-btn {
+        width: 62px;
+        min-width: 62px;
+        height: 68px;
+        flex: 0 0 62px;
+        background-position: center 7px;
+        background-size: 32px;
+        padding: 0 2px 5px;
+    }
+    .pinkdlogo { background-size: 42px; }
+    .menu-label { font-size: 8px; }
+    .main {
+        width: 100%;
+        min-height: 0;
+        padding: 10px;
+        overflow: auto;
+    }
+    .panel {
+        height: auto;
+        min-height: 100%;
+        padding: 14px;
+        border-radius: 10px;
+    }
+    .panel h2 { margin-top: 0; font-size: 1.25rem; }
+    .tabs { gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+    .tab { flex: 0 0 auto; padding: 9px 12px; white-space: nowrap; }
+    .main-layout {
+        height: auto;
+        min-height: 0;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .description-panel {
+        width: 100%;
+        flex: 0 0 auto;
+        max-height: 180px;
+    }
+    .row { align-items: flex-start; }
+    .label { width: auto; flex: 0 0 100%; }
+    .desc { margin-left: 0; }
+    .select-ui, .select-box, .slider-wrap { width: 100%; min-width: 0; }
+    .subtabs { overflow-x: auto; }
+    .subtabs div { flex: 0 0 auto; padding: 8px 10px; white-space: nowrap; }
+    .forum-item { gap: 10px; align-items: flex-start; }
+    .forum-item > * { min-width: 0; }
+    .combat-grid { height: auto; flex-direction: column; overflow: visible; }
+    .combat-column { width: 100%; flex: 0 0 auto; }
+    .player-info-row { flex-wrap: wrap; gap: 18px 24px; }
+    .input-bar {
+        position: sticky;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        margin-top: 16px;
+    }
+    .message-input { min-width: 0; }
+}
+
+@media (max-width: 380px) {
+    .main { padding: 7px; }
+    .panel { padding: 11px; }
+    .btn { margin-bottom: 8px; }
+    .menu-btn { width: 56px; min-width: 56px; flex-basis: 56px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- メイン -->
+    <div class="main">
+        <div class="panel">
+            <h2 id="title">設定</h2>
+            <div class="subtitle" id="subtitle">CinopLus のカスタマイズ</div>
+
+            <div class="main-layout">
+                <!-- 左側：説明パネル -->
+                <div id="module-desc" class="description-panel" style="display:none;">
+                    <div id="desc-title" class="desc-title"></div>
+                    <div id="desc-body" class="desc-body"></div>
+                </div>
+
+                <div style="flex:1; overflow:hidden; display:flex; flex-direction:column;">
+            <!-- 設定コンテンツ -->
+            <div id="content-settings" class="menu-content">
+                <div class="tabs">
+                    <div id="tab-lang" class="tab active" onclick="showTab(event,'lang')">言語</div>
+                    <div id="tab-control" class="tab" onclick="showTab(event,'control')">操作方法</div>
+                    <div id="tab-theme" class="tab" onclick="showTab(event,'theme')">テーマ</div>
+                    <div id="tab-seotr" class="tab" onclick="showTab(event,'seotr')">その他</div>
+                    <div id="tab-usage" class="tab" onclick="showTab(event,'usage')">使い方</div>
+                    <div id="tab-about" class="tab" onclick="showTab(event,'about')">詳細</div>
+                </div>
+
+                <div id="lang" class="tabContent">
+                    <div class="lang">
+                        <button onclick="setLang('ja')" id="btn-ja">日本語</button>
+                        <button onclick="setLang('en')" id="btn-en">English</button>
+                    </div>
+                </div>
+
+                <div id="control" class="tabContent" style="display:none;">
+                    <div class="section-title">メインメニュー</div>
+                    <button class="btn">変更する</button>
+                    <button class="btn">リセット</button>
+                    <button class="btn">消去</button>
+                    <span class="select-box">なし</span>
+                    <div class="toggle">
+                        <div class="switch" onclick="toggleSwitch(this)">
+                            <div class="knob"></div>
+                        </div>
+                        <span>スクリーンボタンを無効化する</span>
+                    </div>
+                </div>
+
+                <div id="theme" class="tabContent" style="display:none;">
+                    <div class="row">
+                        <div class="label">ベーステーマ</div>
+                        <div class="select-ui" onclick="toggleBaseTheme()" style="cursor: pointer;">
+                            <span id="baseTheme">Dark</span>
+                            <div class="select-btn"></div>
+                        </div>
+                        <div class="desc">ベーステーマを選択</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="label">アクセントカラー</div>
+                        <div class="select-ui" onclick="cycleAccentColor()" style="cursor: pointer;">
+                            <span id="accentColor">Gray</span>
+                            <div class="select-btn"></div>
+                        </div>
+                        <div class="desc">アクセントカラー</div>
+                    </div>
+
+                    <hr>
+
+                    <div style="display:flex;align-items:center;gap:15px;">
+                        <button class="btn">プレビューボタン</button>
+                        <div class="switch active" onclick="toggleSwitch(this)">
+                            <div class="knob"></div>
+                        </div>
+                        <span>プレビュートグル</span>
+                    </div>
+
+                    <div style="margin-top:20px; display:flex; align-items:center; gap:15px;">
+                        <div class="slider-wrap">
+                            <input type="range" min="0.0" max="1.0" step="0.1" value="0.5" oninput="updateSlider(this)">
+                            <div class="slider-value" id="sliderValue">0.5</div>
+                        </div>
+                        <span class="desc">プレビュースライダー</span>
+                    </div>
+
+                    <button class="btn" style="margin-top:20px;">デフォルトにリセット</button>
+                </div>
+
+                <div id="seotr" class="tabContent" style="display:none;">
+                    <div class="toggle">
+                        <div class="switch" onclick="toggleSwitch(this)">
+                            <div class="knob"></div>
+                        </div>
+                        <span id="label-crashReport">クラッシュレポートを開発者に送信する</span>
+                    </div>
+                </div>
+                <div id="usage" class="tabContent" style="display:none;">
+                    <div class="section-title" id="label-usage-text">サイトに飛びます。</div>
+                </div>
+                <div id="about" class="tabContent" style="display:none;">
+                    <div class="section-title">Contributors:</div>
+                    <div style="line-height: 1.8; opacity: 0.9;">
+                        ・Cino - Developer<br>
+                    </div>
+                </div>
+            </div>
+
+            <!-- プレイヤーコンテンツ -->
+            <div id="content-player" class="menu-content" style="display:none;">
+                <div class="player-info-row">
+                    <div class="player-info-item">
+                        <span class="player-info-label">NNID　　　　</span>
+                        <!-- <span class="player-info-value" id="player-nnid">---</span> -->
+                    </div>
+                    <div class="player-info-item">
+                        <span class="player-info-label">　Mii　　　</span>
+                        <!-- <span class="player-info-value" id="player-mii">---</span> -->
+                    </div>
+                    <div class="player-info-item">
+                        <span class="player-info-label">　PID　　　　</span>
+                        <!-- <span class="player-info-value" id="player-xuid">---</span> -->
+                    </div>
+                    <div class="player-info-item">
+                        <span class="player-info-label">　IP　　　　　　</span>
+                        <!-- <span class="player-info-value" id="player-xuid">---</span> -->
+                    </div>
+                    <div class="player-info-item">
+                        <span class="player-info-label">　XUID</span>
+                        <!-- <span class="player-info-value" id="player-xuid">---</span> -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- メッセージコンテンツ -->
+            <div id="content-message" class="menu-content" style="display:none; height: 100%;">
+                <div class="input-bar">
+                    <input class="message-input" id="message-placeholder" placeholder="メッセージを送信">
+                    <button class="icon-btn btn-chat"></button>
+                    <button class="icon-btn btn-send"></button>
+                </div>
+            </div>
+
+            <!-- モジュールコンテンツ (戦闘、移動、描画など共通) -->
+            <div id="content-modules" class="menu-content" style="display:none; height: calc(100% - 60px);">
+                <div class="combat-grid" id="module-grid"></div>
+            </div>
+
+                </div> <!-- end flex:1 -->
+            </div> <!-- end main-layout -->
+        </div>
+    </div>
+
+    <!-- サイドバー -->
+    <div class="sidebar">
+
+        <!-- 上 -->
+        <div class="menu">
+            <button class="menu-btn pinkdlogo"><span class="menu-label" id="label-pinkdlogo"></span></button>
+            <button class="menu-btn combat" onclick="selectMenu(this,'combat')"><span class="menu-label" id="label-combat"></span></button>
+            <button class="menu-btn movement" onclick="selectMenu(this,'movement')"><span class="menu-label" id="label-movement"></span></button>
+            <button class="menu-btn render" onclick="selectMenu(this,'render')"><span class="menu-label" id="label-render"></span></button>
+            <button class="menu-btn modmenu" onclick="selectMenu(this,'modmenu')"><span class="menu-label" id="label-modmenu"></span></button>
+            <button class="menu-btn item" onclick="selectMenu(this,'item')"><span class="menu-label" id="label-item"></span></button>
+            <button class="menu-btn world" onclick="selectMenu(this,'world')"><span class="menu-label" id="label-world"></span></button>
+            <button class="menu-btn other" onclick="selectMenu(this,'other')"><span class="menu-label" id="label-other"></span></button>
+            <button class="menu-btn patch" onclick="selectMenu(this,'patch')"><span class="menu-label" id="label-patch"></span></button>
+            <button class="menu-btn server" onclick="selectMenu(this,'server')"><span class="menu-label" id="label-server"></span></button>
+            <button class="menu-btn message" onclick="selectMenu(this,'message')"><span class="menu-label" id="label-message"></span></button>
+            <button class="menu-btn player" onclick="selectMenu(this,'player')"><span class="menu-label" id="label-player"></span></button>
+            <button class="menu-btn settings active" onclick="selectMenu(this,'settings')"><span class="menu-label" id="label-settings"></span></button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+/* ===== 言語 ===== */
+let currentLang = "ja";
+let currentMenu = "settings";
+let currentModuleKey = "";
+
+const texts = {
+    ja: { 
+        subtitle: "Pink Diamond のカスタマイズ",
+        tabs: {
+            lang: "言語",
+            control: "操作方法",
+            theme: "テーマ",
+            seotr: "その他",
+            usage: "使い方",
+            about: "詳細"
+        },
+        sidebar: {
+            combat: "戦闘", movement: "移動", render: "描画", item: "アイテム", modmenu: "モッドメニュー",
+            world: "ワールド", other: "その他", patch: "パッチ", server: "サーバー", message: "メッセージ",
+            player: "プレイヤー", settings: "設定", pinkdlogo: ""
+        },
+        combat_order: ['k_aura', 'zl_spam', 'zr_spam', 'anti_kb', 'inf_aura', 'aim_assist', 'aimbot', 'guard_atk', 'killaura', 'criticals', 'target_strafe', 'triggerbot', 'multi_aura', 'multi_bow', 'reach', 'bow_aim', 'bow_spam', 'torrent', 'auto_disconnect', 'auto_weapon_switch', 'auto_equip', 'auto_golden_apple', 'arrow_to_self'],
+        combat_desc: {
+            k_aura: { name: "KオーラV4", text: "Kaura V4が適応されます。\n\nKaura4.0の使い方\n\n1. プレイヤーの指定\nボタン式の場合\nプレイヤーを指定する場合は「R & 十字下」で指定できます。\n前に戻るには「L & 十字下」で戻ります。\nプレイヤーを指定するとSingleAuraでそのプレイヤーを攻撃できます。\nまたTargetListに追加することができます。\n視点式の場合\n視点でプレイヤーを指定する場合は「ZL & 十字左」を長押しで指定できます。\n「ZL & 十字左」を押している間は少しズームされてプレイヤーを見ると登録されます。\n\n2. TargetListについて\nTargetListはプレイヤーを100人まで登録できます。\n登録したプレイヤーはTargetAuraで攻撃することができます。\nプレイヤーを登録する場合は「ZL & 十字下」\n登録を解除する場合はもう一度「ZL & 十字下」\n\n3. SingleAuraについて\nSingleAuraは指定したプレイヤーを攻撃することができます。\n攻撃する場合は「ZR & 十字上」で1回攻撃できます。\n自動攻撃は「十字上 ×5 短時間押し」で一定時間ごとに攻撃します。\nもう一度「十字上 ×5 短時間押し」で解除します。\n\n4. InfinityAuraについて\nInfinityAuraはワールドに居るプレイヤーを全員攻撃します。\n攻撃する場合は「ZR & 十字左」で1回攻撃できます。\n自動攻撃は「十字左 ×5 短時間押し」で一定時間ごとに攻撃します。\nもう一度「十字左 ×5 短時間押し」で解除します。\n\n5. TargetAuraについて\nTargetAuraはTargetListに登録されたプレイヤーを全員攻撃します。\n攻撃する場合は「ZR & 十字下」で1回攻撃できます。\n自動攻撃は「十字下 ×5 短時間押し」で一定時間ごとに攻撃します。\nもう一度「十字下 ×5 短時間押し」で解除します。\n\n6. AttackSpeed、MultiAttack、HitRataについて\nAttackSpeedは自動攻撃する速度を10段階で調整できます。\n「十字左 & R」で速度を上げます。\n「十字左 & L」で速度を下げます。\n\nMultiAttackは一回攻撃したときに複数回攻撃することができます。\n10段階で攻撃する回数を調整できます。\n「十字上 & R」で攻撃回数を上げます。\n「十字上 & L」で攻撃回数を下げます。\n\nHitRataは相手が高速移動していても攻撃を当てることができます。\n5段階に調整できますが上げすぎるとサーバーに負荷が掛かります。\n「十字右 & R」で精度(負荷が掛かります)を上げます。\n「十字右 & L」で精度(負荷が下がります)を下げます。" },
+            zl_spam: { name: "ZL連打", text: "ZLボタンが連打できます。" },
+            zr_spam: { name: "ZR連打", text: "ZRボタンが連打できます。" },
+            anti_kb: { name: "アンチノックバック", text: "ノックバックしなくなります。" },
+            inf_aura: { name: "インフィニティオーラ", text: "全プレイヤーに攻撃を当てます。\n間隔を設定することができます。" },
+            aim_assist: { name: "エイムアシスト", text: "自動的にエイムを敵に合わせてくれる補正機能です。\nプレイヤーかエンティティか指定することができます。\n検知する範囲や角度、速さ、高さを設定することができます。" },
+            aimbot: { name: "エイムボット", text: "自動的にエイムを敵に合わせてくれます。\nプレイヤーかエンティティか設定できます。" },
+            guard_atk: { name: "ガード攻撃", text: "盾でブロックしながら同時に攻撃できる機能\n・両腕（右腕・左腕）の動作制御\n・武器の種類に応じた自動調整\n・リアルなアニメーション表示" },
+            killaura: { name: "キルオーラ", text: "攻撃する範囲を調整できます。\n\n機能が増えました。\n・範囲を調整する際、枠が表示されて見えやすくなりました。\n・攻撃する速さや距離を、スライダーを動かすだけで直感的に調整できます。\n・ターゲット選択が細かくできるようになりました。\nプレイヤー、モンスター、動物など、攻撃したい相手を細かく選べるようになりました。" },
+            criticals: { name: "クリティカル", text: "いつでもクリティカル" },
+            target_strafe: { name: "ターゲットストレイフ", text: "高速移動して回避しながら攻撃ができます。\n検知する範囲や速さを設定できます。" },
+            triggerbot: { name: "トリガーボット", text: "エンティティに視点合わせると自動で攻撃してくれます。\n範囲を設定できます。" },
+            multi_aura: { name: "マルチオーラ", text: "複数の対象に攻撃してくれます。\n間隔、最大距離を設定できます。プレイヤー、モブ、モンスター、生物を指定できます。" },
+            multi_bow: { name: "マルチボウ", text: "矢の発射範囲を広げます。\n方角をランダムにできます。" },
+            reach: { name: "リーチを伸ばす", text: "リーチが伸びます。\n範囲を設定できます。" },
+            bow_aim: { name: "弓エイムボット", text: "弓を打とうとすると自動的に敵の場所まで計算してくれます。\nプレイヤーだけかエンティティだけか指定できます。\n検知する角度を調整することができます。" },
+            bow_spam: { name: "弓連射", text: "弓を連射できます。\n間隔と連射する矢の多さを指定できます。" },
+            torrent: { name: "激流", text: "激流が発動します。" },
+            auto_disconnect: { name: "自動切断", text: "自動で切断します。" },
+            auto_weapon_switch: { name: "自動武器切り替え", text: "自動で武器を切り替えてくれます。" },
+            auto_equip: { name: "自動装備", text: "自動で装備します。" },
+            auto_golden_apple: { name: "自動金リンゴ", text: "自動で金リンゴ食べます。" },
+            arrow_to_self: { name: "自身に矢を当てる", text: "自分に矢を当てます。" }
+        },
+        movement_order: ['anti_hazard', 'inv_walk', 'air_jump', 'auto_jump', 'auto_sprint', 'no_web', 'click_tp', 'jetpack', 'step', 'spider', 'speed', 'no_slow', 'high_jump', 'bhop', 'packet_swim', 'packet_sneak', 'parkour', 'freecam', 'blink', 'no_clip', 'boat_fly', 'safe_walk', 'jesus', 'no_fall', 'fly', 'fast_ladders', 'fast_bridge', 'fast_fall'],
+        movement_desc: {
+            anti_hazard: { name: "アンチハザード", text: "溶岩ブロックからダメージを防ぎます。" },
+            inv_walk: { name: "インベントリ歩行", text: "持ち物欄を開きながら歩くことができます。" },
+            air_jump: { name: "エアジャンプ", text: "空中でジャンプできます。" },
+            auto_jump: { name: "オートジャンプ", text: "常にジャンプします。" },
+            auto_sprint: { name: "オートスプリント", text: "常に走り食いします。" },
+            no_web: { name: "クモの巣無効", text: "クモの巣が無効化になります。" },
+            click_tp: { name: "クリックTP", text: "クリックしてテレポートができます。\n最大テレポート距離の設定オプション\n音を再生することができます。" },
+            jetpack: { name: "ジェットパック", text: "飛んでる最中に飛行できます。\n速さを調整することができます。" },
+            step: { name: "ステップ", text: "壁の上までテレポートします。\n高さを設定することができます。" },
+            spider: { name: "スパイダー", text: "クモのように壁を上ることができます。\n上る速さを設定することができます。" },
+            speed: { name: "スピード", text: "移動スピードを設定できます。\n移動する速さを設定することができます。" },
+            no_slow: { name: "スロー効果無効", text: "空腹状態でも走れます。" },
+            high_jump: { name: "ハイジャンプ", text: "高くジャンプします。\nジャンプする高さを指定することができます。" },
+            bhop: { name: "バニーホップ", text: "うさぎのように跳べます。\n勢いと速さを調整することができます。" },
+            packet_swim: { name: "パケットスイム", text: "他人から泳いでるように見えます。" },
+            packet_sneak: { name: "パケットスニーク", text: "他人からスニークしてるように見えます。" },
+            parkour: { name: "パルクール", text: "ブロックの端で自動的にスニーク状態になる安全機能\n・飛行モード時は自動的に無効化\n・建築作業での安全性向上" },
+            freecam: { name: "フリーカメラ", text: "幽体離脱してスペクテイターのようになれます。" },
+            blink: { name: "ブリンク", text: "他人からは移動していないように見えます。" },
+            no_clip: { name: "ブロック貫通", text: "ブロックを貫通できるようになります。" },
+            boat_fly: { name: "ボート飛行", text: "ボートで移動、飛行できるようになります。\n速さを指定することができます。" },
+            safe_walk: { name: "安全歩行", text: "ゆっくり歩きます。" },
+            jesus: { name: "水上歩行", text: "水の上を歩けます。" },
+            no_fall: { name: "落下ダメージ無効", text: "落下ダメージがなくなります。" },
+            fly: { name: "飛行", text: "飛べます。" },
+            fast_ladders: { name: "高速はしご", text: "高速ではしごを登れます。\n登れる速さを指定できます。" },
+            fast_bridge: { name: "高速ブリッジ", text: "高速で橋を作れます。" },
+            fast_fall: { name: "高速落下", text: "高速で落下します。" }
+        },
+        render_order: ['cps', 'esp', 'fps', 'no_mc_font', 'better_nametag', 'armor_hud', 'wallhack', 'custom_sky', 'keystrokes', 'shader', 'skin_size', 'zoom', 'chest_esp', 'chunk_boundaries', 'no_texture', 'no_totem_anim', 'fullbright', 'nametag', 'no_particle', 'player_camera', 'memory_usage', 'level_norm', 'radar', 'hp_indicator', 'no_dynamic_fov', 'weather_changer', 'position', 'hitbox', 'view_distance', 'time_changer', 'no_fire', 'image_display', 'no_hurtcam', 'true_sight', 'change_fov', 'no_fog'],
+        render_desc: {
+            cps: { name: "CPS", text: "ZRとZLのCPSが表示されます。\n描画した場所を固定できます。\n背景と文字の色を指定することができます。\n描画の枠をなめらかにできます。" },
+            esp: { name: "ESP", text: "ESPが表示されます。\nプレイヤー、友好的モブ、敵対モンスターなどそれぞれボックス(枠)とトレーサー(目線)と色を指定できます。" },
+            fps: { name: "FPS", text: "FPSが表示されます。\n描画した場所を固定できます。\n背景と文字の色を指定することができます。\n描画の枠をなめらかにできます。" },
+            no_mc_font: { name: "MCフォント無効", text: "マイクラフォントが無効化します。" },
+            better_nametag: { name: "より良いネームタグ", text: "通常のネームタグより精度が上がります。\n\n壁透過チェック: プレイヤーとの間に壁やブロックがある時は、ネームタグやHPバーを非表示にできるようになりました。\nエディション別機能: \n・Free版: 基本的なネームタグ表示\n・Premium版: 壁を貫通してNameTagを表示可能\n・Pro版: 壁貫通にさらに進化したHPインジケーターが利用可能に\nItemEntity（落ちているアイテム）の表示に対応\nアイテムの耐久力表示\nMob（モンスター・動物）の詳細情報表示\nItemOverlay機能の追加" },
+            armor_hud: { name: "アーマーHUD", text: "防具の状態が表示されます。" },
+            wallhack: { name: "ウォールハック", text: "壁からでもエンティティを表示します。" },
+            custom_sky: { name: "カスタムスカイ", text: "空の状態を自由に変更できます。\nTimeChangerとWeatherChangerとの完全統合\nより正確な時間帯判定（朝・昼・夕方・夜）" },
+            keystrokes: { name: "キーストローク", text: "WASDを表示する。\n描画した場所を固定できます。\n背景と文字の色を指定することができます。\n描画の枠をなめらかにできます。" },
+            shader: { name: "シェーダー", text: "影を表示します。\n色を指定できます。" },
+            skin_size: { name: "スキンサイズ変更", text: "スキンのサイズが変更できます。\n大きさを調整できます。" },
+            zoom: { name: "ズーム", text: "遠くの景色を拡大、縮小できます。\n距離を調整できます。" },
+            chest_esp: { name: "チェストESP", text: "チェストにESPが付きます。\nチェスト関連のものを設定できます。\nボックス(枠)、トレーサー(目線)、色を指定できます。" },
+            chunk_boundaries: { name: "チャンク境界", text: "チャンクの境界線が表示されます。" },
+            no_texture: { name: "テクスチャ無効", text: "テクスチャのロードが無効化になります。" },
+            no_totem_anim: { name: "トーテムアニメ無効", text: "トーテムを持って死んだときのアニメーションを無効にします。" },
+            fullbright: { name: "ナイトビジョン", text: "画面が明るくなります。" },
+            nametag: { name: "ネームタグ", text: "ネームタグが表示されます。" },
+            no_particle: { name: "パーティクル無効", text: "パーティクルが無効化になります。" },
+            player_camera: { name: "プレイヤーカメラ", text: "他のプレイヤー視点へ切り替えできる機能\nプレイヤーの視点をリアルタイムで確認することが可能になります。" },
+            memory_usage: { name: "メモリ使用量", text: "マインクラフトのメモリ使用量をMB単位で表示するモジュールを追加" },
+            level_norm: { name: "レベル正規化", text: "エンチャントレベルが全て数字で表示されます。" },
+            radar: { name: "レーダー", text: "周りにいるプレイヤーやモンスター、動物などの位置が画面に表示されるようになります。" },
+            hp_indicator: { name: "体力表示", text: "体力が表示されます。" },
+            no_dynamic_fov: { name: "動的視野角無効", text: "走った時、走りを解除したときなどに出てくる画面の視野角を無効化します。" },
+            weather_changer: { name: "天候変更", text: "天候を完全制御できる機能\n・晴れ・雨・雪・雷の設定が可能\n・滑らかな天候変化のイージング機能\n・CustomSkyとの完全統合" },
+            position: { name: "座標表示", text: "座標が表示されます。\n描画した場所を固定できます。\n背景と文字の色を指定することができます。\n描画の枠をなめらかにできます。" },
+            hitbox: { name: "当たり判定表示", text: "エンティティに枠が表示されます。" },
+            view_distance: { name: "描画距離を変更", text: "描画距離を変更することができます。\n デフォルトは50 \n1～100まで設定することができます。" },
+            time_changer: { name: "時間変更", text: "ワールド内の時間を自由に調整できる機能\n・滑らかなイージング機能付き\n・月の満ち欠け設定が可能\n・CustomSkyとの連携対応" },
+            no_fire: { name: "火を非表示", text: "火の表示を無効化できます。\n燃えてるときの高さを調整できます。" },
+            image_display: { name: "画像表示", text: "任意の画像をゲーム内オーバーレイとして表示できる機能\n[PinkDiamond/images]フォルダ内の画像を読み込み\n表示画像の選択に対応\nオーバーレイとして画面上に表示\nモジュール優先度システムに対応" },
+            no_hurtcam: { name: "画面の揺れ無効", text: "ゲーム画面が揺れた時の揺れを無効化します。" },
+            true_sight: { name: "真視", text: "透明状態のエンティティ（プレイヤーなど）を視認可能にします。" },
+            change_fov: { name: "視野角", text: "視野を変更することができます。\n角度を調整できます。" },
+            no_fog: { name: "霧を非表示", text: "霧の表示を無効化できます。" }
+        },
+        modmenu_order: ['cinomenu', 'add_attribute', 'armor_color', 'add_enchant', 'custom_menu', 'costreset', 'delet_tag', 'hackitem_menu', 'potion_menu', 'add_potion', 'mobspawner_edit', 'loot_table', 'add_hideflag', 'countryflag_menu', 'villager_edit', 'unbreakable_menu', 'add_unbreakable'],
+        modmenu_desc: {
+            cinomenu: { name: "ちのメニュー", text: "ツールタブのクリエイティブメニューに製作者が作った最新版の最強モッドメニューを適応されます。" },
+            add_attribute: { name: "アビリティ追加", text: "持ってるアイテムにノックバック耐性やスピード、攻撃力が変更できるようになる特殊アビリティを付与します。2つ以上設定することもできます。" },
+            armor_color: { name: "アーマーカラー", text: "ツールタブのクリエイティブメニューに色のついた革防具と地図が適応されます。" },
+            add_enchant: { name: "エンチャント追加", text: "持ってるアイテムに防具や鋭さ、効率強化などのエンチャントを付与できます。2つ以上設定することもできます。" },
+            custom_menu: { name: "カスタムメニュー", text: "ツールタブのクリエイティブメニューにあまり見たことない特殊なアイテムが適応されます。" },
+            costreset: { name: "コストリセット", text: "持ってるアイテムの合成レベルのコストをリセットする機能" },
+            delet_tag: { name: "タグ削除", text: "持ってるアイテムのNBTタグなどを全て排除する機能" },
+            hackitem_menu: { name: "ハックアイテム", text: "材料タブのクリエイティブメニューに一般的に有名な改造アイテムが適応されます。" },
+            potion_menu: { name: "ポーションメニュー", text: "材料タブのクリエイティブメニューにレベル変更ができるポーションメニューが適応されます。" },
+            add_potion: { name: "ポーション効果追加", text: "持ってるポーションアイテムにポーションの効果、時間、レベルなどを付与します。2つ以上設定することもできます。" },
+            mobspawner_edit: { name: "モブスポナー編集", text: "モブを生成するスポナーを作成することができます。" },
+            loot_table: { name: "ルートテーブル", text: "材料タブのクリエイティブメニューにルートテーブルが格納されているチェストメニューが適応されます。" },
+            add_hideflag: { name: "効果隠し追加", text: "持ってるアイテムの効果を隠すことができます。" },
+            countryflag_menu: { name: "国旗メニュー", text: "ツールタブのクリエイティブメニューにいろんな国の国旗が適応されます。" },
+            villager_edit: { name: "村人スポナー作成", text: "自分なりの交易を1から作成することができます。職業、方角などを設定できます。2つ以上設定することもできます。" },
+            unbreakable_menu: { name: "耐久メニュー", text: "ツールタブのクリエイティブメニューに無限耐久の特殊アビリティを付与します。" },
+            add_unbreakable: { name: "耐久追加", text: "持ってるアイテムに無限耐久の特殊アビリティを追加します。" }
+        },
+        item_order: ['replace_id', 'craft_everything', 'show_item_id', 'item_copy', 'item_stack', 'create_item', 'clear_inventory', 'sort_inventory', 'swap_offhand', 'replace_damage', 'chest_steal', 'drop_stack', 'rainbow_armor', 'instant_arming', 'auto_tools', 'fast_craft'],
+        item_desc: {
+            replace_id: { name: "ID書き換え", text: "手に持ってるアイテムのIDを書き換えることができます。\nIDを書き換えることができます。" },
+            craft_everything: { name: "なんでもクラフト", text: "どこでもなんでもクラフトすることができます。" },
+            show_item_id: { name: "アイテムID表示", text: "アイテムにIDが表示されます。" },
+            item_copy: { name: "アイテムコピー", text: "アイテムをコピーできます。" },
+            item_stack: { name: "アイテムスタック", text: "手に持ってるアイテムの数を設定できます。\n数を指定できます。" },
+            create_item: { name: "アイテム作成", text: "アイテムを作ることができます。\nアイテムを作るとき、細かく調整できます。" },
+            clear_inventory: { name: "インベントリリセット", text: "インベントリーをリセットすることができます。\n防具、左手、持ち物欄、手持ちを指定することができます。" },
+            sort_inventory: { name: "インベントリ整理", text: "インベントリ内のアイテムを自動的に並び替え、スッキリ整理します。" },
+            swap_offhand: { name: "スワップオフハンド", text: "左手にアイテムを移動することができます。" },
+            replace_damage: { name: "ダメージ値書き換え", text: "手に持ってるアイテムのダメージ値を書き換えることができます。\nダメージ値を書き換えることができます。" },
+            chest_steal: { name: "チェストスティール", text: "チェストの中身を全て取る" },
+            drop_stack: { name: "ドロップスタック", text: "手に持ってるアイテムを一括で捨てることができます。" },
+            rainbow_armor: { name: "虹色防具", text: "革装備が虹色に光ります。" },
+            instant_arming: { name: "即時武装", text: "戦うためのアイテムがクラフトされます。" },
+            auto_tools: { name: "自動ツール持ち替え", text: "自動で武器を持ち替えることができます。" },
+            fast_craft: { name: "高速クラフト", text: "高速でクラフトすることができます。" }
+        },
+        world_order: ['art_3d', 'nbt_edit', 'anti_kick', 'anti_command', 'nuker', 'pixel_art', 'world_edit', 'harvest_with_ease', 'sign_editor', 'fast_nuker'],
+        world_desc: {
+            art_3d: { name: "3Dアート", text: "3Dモデルを作成できます。\nupdateを押すことで更新されます。 \n\n3Dモデルの作り方はDiscord公式サーバーから直接見てください。\n" },
+            nbt_edit: { name: "NBT編集", text: "アイテムを細かく改造することができます。\nアイテムにNBTが付いてるか確認がしたい場合は、アイテムID表示を付けることをお勧めします。\n\nエディションごとに使える幅が違います。\n・Free版: NBTデータの閲覧ができます。\n・Premium版: 数値や文字列など、基本的なデータ編集が可能です。\n・Professional版: すべての機能をご利用いただけます。\nNBTツリー表示の改善\nタグの追加・編集・削除に対応\nListTag内のIndex項目の操作性を改善\nコピー・ペースト・切り取りに対応\nUndo / Redo に対応\nクリップボード機能を追加\nブックマーク機能を追加\nタッチ操作向けのアイコンUIを追加\n" },
+            anti_kick: { name: "アンチキック", text: "追放されなくなります。" },
+            anti_command: { name: "アンチコマンド", text: "コマンドが全て無効化されます。" },
+            nuker: { name: "ヌーカー", text: "形と範囲を指定できる簡易的なヌーカーです。\n立方体か球体か指定できます。\n範囲を指定できます。" },
+            pixel_art: { name: "ピクセルアート", text: "ドット絵を作成できます。\nupdateを押すと更新されます。\n方角を指定できます。" },
+            world_edit: { name: "ワールドエディット", text: "ブロックの編集ができます。\n\nワールドエディットの使い方\nツールを左手に持つことができます。\nツールを左手に持つ方法は、スワップオフハンドのモジュールを適応する必要があります。\n\n各ツールを左手に持つと、それに準じた枠が表示されます。\n\n実行方法は、「ZL & 十字キー下」\nツールによっては、ブロックを持った状態や持たない状態で適応されます。\n\nツールを持った状態で、範囲を調節することができます。\n「十字キー下 & L」大きさを拡大\n「十字キー下 & R」大きさを縮小\n範囲が大きければ大きいほど、処理が重たくなります。\n大きさに限度はないですが、クラッシュする可能性が高くなります。\n\n一部のツールでなめらかさを変更することができます。\n十字キー左とLRを押すことで、細かく設定することができます。\n「十字キー左 & L」大きさを拡大\n「十字キー左 & R」大きさを縮小\n鉄のツルハシ、金のツルハシ、ダイヤモンドのツルハシは、\n「ZR & 十字キー下」ボタンを押すことで、範囲を自由に設定することができます。\n\n木の斧を使用することで、球体状にブロックを敷き詰めることができます。\n\n木のツルハシを使用することで、球体状にブロックを削ることができます。\n\n木のシャベルを使用することで、ブロックを削ることができます。\n\n木のクワを使用することで、柱状にブロックを置くことができます。\n上のブロックを起点に下の地面まで作成することができます。\n\n石のシャベルを使用することで、ブロックを盛り上げることができます。\n\n石の斧を使用することで、視点先にあるブロックを編集することができます。\n・ブロックを持つと、視点先のブロックにそのブロックを上書きすることができます。\n・何も持たない状態だと、視点先にある1種類のブロックを削ることができます。\n\n石のクワを使用することで、足元を中心にブロックを置くことができます。\n\n鉄の斧を使用することで、枠のみを作成することができます。\n\n鉄のツルハシを使用することで、壁を作成することができます。\n・ブロックを持つと壁が作成されます。\n・何も持たない状態で、削除することができます。\n\n金のツルハシを使用することで、思った通りの形に円形を作成できます。\n金のシャベルは、木のシャベルより性能が高いです。\n\nダイヤモンドのツルハシを使用することで、立体状に敷き詰めることができます。\nダイヤモンドのシャベルは石のシャベルより性能が高いです。\n\n\n他のアイテムについて解説\nバケツを使用することで、水や溶岩のみを削除することができます。\n背の高い草を使用することで、土ブロックを草ブロックに上書きすることができます。\nたいまつを使用することで、効率よくたいまつを設置することができます。\n" },
+            harvest_with_ease: { name: "収穫アシスト", text: "作物の収穫と植え直しを自動で行うことができます。" },
+            sign_editor: { name: "看板編集", text: "しゃがみながら看板をクリックすると、看板の編集ができます。" },
+            fast_nuker: { name: "高速ヌーカー", text: "ヌーカーの高速バージョンです。\n立方体か球体か指定できます。\n範囲を指定できます。" }
+        },
+        other_order: ['unlock_dlc', 'mii_changer', 'nnid_changer', 'audio_player', 'public_game', 'fof_bypass', 'unlock_home', 'voice_changer', 'mic_mute', 'mg_swap_skin', 'mini_game_start', 'message', 'to_menu', 'module_list', 'log_delet', 'always_score_check', 'vote_increase', 'no_censored', 'auto_fish'],
+        other_desc: {
+            unlock_dlc: { name: "DLC解除", text: "追加コンテンツの制限を解除します。" },
+            mii_changer: { name: "Miiの名前変更", text: "Miiの名前を変更できます。\n名前を変更できる場所があります。" },
+            nnid_changer: { name: "NNID変更", text: "NNIDを変更できます。\nIDを変更できる場所があります。" },
+            audio_player: { name: "オーディオプレイヤー", text: "sd:/PinkDiamond/audio/ に MIDI ファイルを入れることで音楽を読み込むことができます。\n「更新」ボタンで、フォルダ内の MIDI を再読み込み可能\nリストから再生したい MIDI を選び、「MIDIをロード」→「再生」で再生することができます。\n再生モード\n・通常モード：ピアノのみで演奏\n・拡張モード：複数の楽器で演奏" },
+            public_game: { name: "パブリック有効", text: "ミニゲームでパブリックを有効にできます。" },
+            fof_bypass: { name: "フレフレ無効", text: "フレンドのフレンドの制限を解除します。" },
+            unlock_home: { name: "ホームボタン解除", text: "オンラインでもホームボタンを解除できます。" },
+            voice_changer: { name: "ボイスチェンジャー", text: "声を変更できます。\nピッチを調整できます。" },
+            mic_mute: { name: "マイクミュート", text: "相手に声が聞こえなくなります。" },
+            mg_swap_skin: { name: "ミニゲームスキン変更", text: "ミニゲーム中にスキンを変更することができます。" },
+            mini_game_start: { name: "ミニゲームスタート", text: "一人でもミニゲームを開始できます。" },
+            message: { name: "メッセージ", text: "メッセージ画面を開かなくても常に小さい画面で起動させておくことができます。" },
+            to_menu: { name: "メニューに戻る", text: "メインメニューへ戻ります。" },
+            module_list: { name: "モジュール一覧", text: "有効しているモジュールを画面に一覧表示します。" },
+            log_delet: { name: "ログ削除", text: "現在画面上に出てるログを全て削除します。" },
+            always_score_check: { name: "常に戦績確認", text: "ミニゲーム内での戦績をいつでも確認することができます。" },
+            vote_increase: { name: "投票数増加", text: "ミニゲーム内でステージを投票したときの数を指定できます。\n-128～127まで指定することができます。" },
+            no_censored: { name: "検閲無効", text: "検閲を無効化します。" },
+            auto_fish: { name: "自動魚釣り", text: "自動で魚を釣ることができます。\n引き上げまでの時間や次の釣りまでの時間を設定することができます。" }
+        },
+        patch_order: ['no_custom_skin', 'fix_craft_packet', 'fix_double_slab', 'network_protect', 'anti_piston_door_bugs', 'anti_crash_tp', 'anti_crash_arrow', 'anti_crash_with_golem', 'anti_crash_scull', 'freeze_skin_fix', 'anti_crash_spawner', 'anti_crash_packet', 'anti_crash_dispenser', 'anti_crash_fish', 'fix_splash_potion', 'fix_villager_trades'],
+        patch_desc: {
+            no_custom_skin: { name: "カスタムスキン無効", text: "カスタムスキンを無効化します。" },
+            fix_craft_packet: { name: "クラフトパケット修正", text: "不正クラフトパケットを無効化します。" },
+            fix_double_slab: { name: "ダブルハーフ修正", text: "ダブルハーフブロック関連のフリーズする問題を修正します。" },
+            network_protect: { name: "ネットワーク保護", text: "切断スキンを無効化します。" },
+            anti_piston_door_bugs: { name: "ピストンドアバグ無効", text: "ピストンドアでフリーズする問題を解決します。" },
+            anti_crash_tp: { name: "フリーズTP無効", text: "存在しない座標やゲーム内でのフリーズする場所へテレポートされた時、フリーズする問題を修正します。" },
+            anti_crash_arrow: { name: "フリーズの矢無効", text: "タグが沢山付いた矢が当たるとフリーズする問題を修正します。" },
+            anti_crash_with_golem: { name: "フリーズゴーレム無効", text: "方角によって召喚しようとするとフリーズする問題を修正します。" },
+            anti_crash_scull: { name: "フリーズスカル無効", text: "存在しないヘッドアイテムを見た時、フリーズする問題を修正します。" },
+            freeze_skin_fix: { name: "フリーズスキン無効", text: "不正なスキンによって、フリーズする問題を修正します。" },
+            anti_crash_spawner: { name: "フリーズスポナー無効", text: "スポナーからモブ以外のエンティティが召喚されたとき、フリーズする問題を修正します。" },
+            anti_crash_packet: { name: "フリーズパケット無効", text: "パケットでフリーズする問題を修正します。" },
+            anti_crash_dispenser: { name: "フリーズ発射装置無効", text: "発射装置を使ってフリーズする問題を修正します。" },
+            anti_crash_fish: { name: "フリーズ魚無効", text: "魚アイテムで存在しないテクスチャでフリーズする問題を修正します。" },
+            fix_splash_potion: { name: "ポーション修正", text: "ポーションが2個使われる問題を修正します。" },
+            fix_villager_trades: { name: "交易パケット修正", text: "村人との取引における不具合を修正\nより安定した取引システムの向上" }
+        },
+        server_order: ['tnt_break_disable', 'amplified', 'unlock_enchant_limit', 'custom_combo', 'no_custom_skin_server', 'custom_battle_lobby', 'disable_craft', 'disable_creative', 'can_kill_creative', 'double_door', 'debug_stick', 'back_craft', 'back_pack', 'unlock_block_limit', 'disable_break_block', 'player_limit', 'infinite_potion_time', 'disable_potion', 'mid_game_join', 'unlock_mod_limit', 'view_miner', 'nested_shulker', 'egg_damage', 'free_offhand', 'sit_plugin', 'sign_commands', 'sign_editor_plugin', 'infinite_endurance', 'tumble_fireworks', 'fishing_rod_damage', 'free_armor_slot', 'snowball_damage', 'exploit_snowball', 'projectiles_break'],
+        server_desc: {
+            tnt_break_disable: { name: "TNTブロック破壊無効", text: "TNTが爆発したとき、ブロックが破壊されません。" },
+            amplified: { name: "アンプリファイド", text: "ワールド生成時にアンプリファイド地形を生成できます。" },
+            unlock_enchant_limit: { name: "エンチャント上限解除", text: "エンチャント内容を合成するときの上限がなくなります。" },
+            custom_combo: { name: "カスタムコンボ", text: "コンボを設定することができます。\nコンボを調整できます。" },
+            no_custom_skin_server: { name: "カスタムスキン無効", text: "エラーマント対応、フリーズスキン読み込み対応\nホスト時の動作安定性向上" },
+            custom_battle_lobby: { name: "カスタムバトルロビー", text: "ミニゲーム開始前のカスタムロビー機能\n・ホスト専用機能\n・ゲーム開始前の待機時間を自由に設定\n・プレイヤーが集まるまでロビーで待機可能" },
+            disable_craft: { name: "クラフト無効化", text: "クラフトを無効化できます。" },
+            disable_creative: { name: "クリエイティブ無効化", text: "クリエイティブのアイテム欄からアイテムが取れなくなる。" },
+            can_kill_creative: { name: "クリエ無敵解除", text: "クリエイティブでもダメージが入ります。" },
+            double_door: { name: "ダブルドア", text: "隣接している複数のドアを同時に開閉することができます。" },
+            debug_stick: { name: "デバック棒", text: "デバック棒モジュールを長押しすると専用の棒が手元に上書きされます。\n専用の棒でアイテムのダメージ値を変更できます。" },
+            back_craft: { name: "バッククラフト", text: "アイテムが壊れると材料に戻る機能" },
+            back_pack: { name: "バックパック", text: "バックパックモジュールを長押しすると専用のシュルカーボックスが手元に上書きされます。\n任意(デフォルト:ZR)のボタンを押すことで中身を見ることができます。\n" },
+            unlock_block_limit: { name: "ブロック上限解除", text: "旗やビーコンなどの設置数が制限されているブロックの制限を解除します。" },
+            disable_break_block: { name: "ブロック破壊無効", text: "ブロックの破壊を無効化します。" },
+            player_limit: { name: "プレイヤー制限", text: "ワールドに入れるプレイヤーの数を制限します。\n上限を制限できます。" },
+            infinite_potion_time: { name: "ポーション時間無限", text: "ポーションの時間を無限にします。" },
+            disable_potion: { name: "ポーション無効", text: "ポーションを無効化します。" },
+            mid_game_join: { name: "ミニゲーム途中参加", text: "開始されたミニゲームに途中から参加可能\n・ホスト専用機能\n・ゲーム進行中でも新しいプレイヤーが参加可能\n・既存のゲームバランスを維持" },
+            unlock_mod_limit: { name: "モブ上限解除", text: "モブの上限を解除します。" },
+            view_miner: { name: "一括破壊", text: "特定のブロックを一括で破壊できます。\n範囲を調整できます。\nプレイヤーの状態を指定できます。\n原木(wood)、鉱石(ore)、石(stone)、その他(other)を指定できます。\n破壊したアイテムを自動的にまとめる機能\nエンチャント（幸運、シルクタッチなど）への完全対応" },
+            nested_shulker: { name: "入れ子シュルカー", text: "シュルカーボックスの中にシュルカーボックスを入れることができます。" },
+            egg_damage: { name: "卵ダメージ", text: "エンティティに卵を当てるとダメージが通ります。" },
+            free_offhand: { name: "左手制限解除", text: "左手の制限を解除します。" },
+            sit_plugin: { name: "椅子プラグイン", text: "階段やハーフブロックを見ながら腕を振ると、座ることができます。" },
+            sign_commands: { name: "看板コマンド", text: "看板コマンドが適応されます。\n\n看板コマンドの主な情報\n看板を使用することで細かな設定を追加することができます。\n現在導入予定なコマンド内容はこちらです。\nEffectCommand  \nGameModeCommand  \nGiveCommand  \nHealthCommand  \nHungerCommand  \nKillCommand  \nPortalCommand  \nSayCommand  \nSetBlockCommand  \nTPCommand  \n\n最初にスラッシュ( / )を付けることでコマンドを実行することが可能です。\n(例) /tp ~~~ ~~~ \n詳しくはモジュールを長押しすると確認することが可能となります。\n\nしゃがみながら看板をクリックすると、看板の編集ができます。" },
+            sign_editor_plugin: { name: "看板編集プラグイン", text: "自分のワールドにいる全プレイヤーが「看板コマンド」を使用可能になります。" },
+            infinite_endurance: { name: "耐久力無限", text: "耐久力を無限にします。" },
+            tumble_fireworks: { name: "転落の花火", text: "転落の花火のように横に飛ばすことができます。" },
+            fishing_rod_damage: { name: "釣り竿ダメージ", text: "エンティティに釣り竿をひっかけた時にダメージを通します。" },
+            free_armor_slot: { name: "防具スロット制限解除", text: "防具スロットの制限を解除します。" },
+            snowball_damage: { name: "雪玉ダメージ", text: "エンティティに雪玉を当てるとダメージが通ります。" },
+            exploit_snowball: { name: "雪玉爆発", text: "雪玉を飛ばすと爆発します。\n雪玉が地面に着くまでか指定できます。" },
+            projectiles_break: { name: "飛び道具で破壊", text: "飛び道具で当たったブロックが破壊されます。" }
+        },
+        message_placeholder: "メッセージを送信"
+    },
+    en: { 
+        subtitle: "Customize your PinkDiamond",
+        tabs: {
+            lang: "Language",
+            control: "Input",
+            theme: "Theme",
+            seotr: "Misc",
+            usage: "Usage",
+            about: "About"
+        },
+        sidebar: {
+            combat: "Combat", movement: "Movement", render: "Render", item: "Item", modmenu: "ModMenu",
+            world: "World", other: "Misc", patch: "Patch", server: "Server", message: "Message",
+            player: "Player", settings: "Settings", pinkdlogo: ""
+        },
+        
+        combat_order: ['aim_assist', 'aimbot', 'criticals', 'anti_kb', 'auto_equip', 'auto_disconnect', 'auto_golden_apple', 'auto_weapon_switch', 'bow_aim', 'arrow_to_self', 'zr_spam', 'bow_spam', 'zl_spam', 'guard_atk', 'inf_aura', 'k_aura', 'killaura', 'multi_aura', 'multi_bow', 'reach', 'torrent', 'target_strafe', 'triggerbot'],
+        combat_desc: {
+            aim_assist: { name: "AimAssist", text: "This is an assist function that automatically adjusts your aim towards enemies.\nYou can specify whether it is a player or an entity.\nYou can set the detection range, angle, speed, and height." },
+            aimbot: { name: "AimBot", text: "It will automatically aim at the enemy.\nCan be set to player or entity." },
+            criticals: { name: "AlwaysCritical", text: "always critical" },
+            anti_kb: { name: "AntiKB", text: "No longer knocks back." },
+            auto_equip: { name: "AutoArmor", text: "It will be equipped automatically." },
+            auto_disconnect: { name: "AutoDisconnect", text: "You will be automatically disconnected." },
+            auto_golden_apple: { name: "AutoGapple", text: "Automatically eats golden apples." },
+            auto_weapon_switch: { name: "AutoWeapon", text: "The weapon will switch automatically." },
+            bow_aim: { name: "BowAimBot", text: "When you try to shoot a bow, it will automatically calculate the enemy’s location." },
+            arrow_to_self: { name: "EasyHitArrow", text: "Shoot an arrow at yourself." },
+            zr_spam: { name: "FastAction", text: "You can press the ZR button repeatedly." },
+            bow_spam: { name: "FastBow", text: "The bow can be fired repeatedly.\nYou can specify the interval and number of arrows to fire." },
+            zl_spam: { name: "FastUse", text: "You can press the ZL button repeatedly." },
+            guard_atk: { name: "GuardAttack", text: "A feature that allows you to attack while blocking with a shield.\n・Control of both arm movements\n・Automatic adjustment based on weapon type\n・Realistic animation display" },
+            inf_aura: { name: "InfinityAura", text: "Attacks all players.\nYou can set the interval." },
+            k_aura: { name: "KauraV4", text: "How to use Kaura4.0\n1. Player Specification\nFor push-button types\n「D-Pad DOWN & R」To select a player\n「D-Pad DOWN & L」return\nBy selecting a player, you can attack that player with SingleAura.\nYou can also add it to the TargetList.\nFor the viewpoint method\n「Hold (D-Pad LEFT & ZL)」To select a player via the viewpoint\n「D-Pad LEFT & ZL」Whilst pressed, it zooms in slightly to register when viewing the player.\n\n2. TargetList\nYou can register up to one hundred players.\nRegistered players can attack using TargetAura.\n「D-Pad DOWN & ZL」When registering a player\n「D-Pad DOWN & ZL」To deregister, once more\n\n3. SingleAura\nSingleAura can attack the designated player.\n「D-Pad UP & ZR」You can attack once.\n「D-Pad UP ×5 (Short press)」Automatically attacks at regular intervals.\n「D-Pad UP ×5 (Short press)」Disable auto-attack.\n\n4. InfinityAura\nInfinityAura attacks all players present in the world.\n「D-Pad LEFT & ZR」You can attack once.\n「D-Pad LEFT ×5 (Short press)」Automatically attacks at regular intervals.\n「D-Pad LEFT ×5 (Short press)」Disable auto-attack.\n\n5. TargetAura\nTargetAura attacks all players registered in TargetList.\n「D-Pad DOWN & ZR」You can attack once.\n「D-Pad DOWN ×5 (Short press)」Automatically attacks at regular intervals.\n「D-Pad DOWN ×5 (Short press)」Disable auto-attack.\n\n6. AttackSpeed, MultiAttack, HitRata\nAttack Speed can be adjusted across ten levels to control the rate of auto-attacks.\n「D-Pad LEFT & R」to up speed.\n「D-Pad LEFT & L」to down speed.\nMultiAttack allows you to attack multiple times with a single strike.\nThe number of attacks can be adjusted across ten levels.\n「D-Pad UP & R」Increase the attack count\n「D-Pad UP & L」Reduce the attack count\nHitRata can land attacks even when the opponent is moving at high speed.\nIt can be adjusted to five levels, but increasing it too much will place a load on the server.\n「D-Pad RIGHT & R」It increases accuracy, but places a load on the system.\n「D-Pad RIGHT & L」It reduces accuracy, but the load is reduced." },
+            killaura: { name: "KillAura", text: "You can adjust the attack range.\n\n・When adjusting the range, a frame is now displayed for improved visibility.\n・You can intuitively adjust attack speed and range simply by moving the slider.\n・Target selection can now be made with greater precision.\nYou can now select specific targets for attack, such as players, monsters, or animals." },
+            multi_aura: { name: "MultiAura", text: "Attack multiple targets from different angles." },
+            multi_bow: { name: "MultiBow", text: "Increases the range of arrow firing." },
+            reach: { name: "Reach", text: "Increased reach.\nYou can set the range." },
+            torrent: { name: "Riptide", text: "A torrent will be triggered." },
+            target_strafe: { name: "TargetStrafe", text: "You can move quickly and dodge attacks at the same time.\nYou can set the detection range and speed." },
+            triggerbot: { name: "TriggerBot", text: "When you focus on an entity, it will automatically attack.\nYou can set the range" }
+        },
+        movement_order: ['air_jump', 'anti_hazard', 'auto_jump', 'auto_sprint', 'bhop', 'blink', 'boat_fly', 'click_tp', 'fast_bridge', 'fast_fall', 'fast_ladders', 'fly', 'freecam', 'high_jump', 'inv_walk', 'jesus', 'jetpack', 'no_clip', 'no_fall', 'no_slow', 'no_web', 'packet_sneak', 'packet_swim', 'parkour', 'safe_walk', 'speed', 'spider', 'step'],
+        movement_desc: {
+            air_jump: { name: "AirJump", text: "Can air jump" },
+            anti_hazard: { name: "AntiHazard", text: "Prevents damage from lava blocks." },
+            auto_jump: { name: "AutoJump", text: "always jump" },
+            auto_sprint: { name: "AutoSprint", text: "always running and eating" },
+            bhop: { name: "Bhop", text: "jump like a rabbit.\nYou can adjust the force and speed." },
+            blink: { name: "Blink", text: "To others, it looks like it’s not moving." },
+            boat_fly: { name: "BoatFly", text: "You will be able to travel by boat.\nYou can specify the speed." },
+            click_tp: { name: "ClickTP", text: "Click to teleport.\nMaximum teleport distance setting option\nCan play sound" },
+            fast_bridge: { name: "FastBridge", text: "You can build bridges quickly." },
+            fast_fall: { name: "FastFall", text: "It falls at high speed." },
+            fast_ladders: { name: "FastLadders", text: "You can climb ladders at high speed.\nYou can specify how fast you want to climb." },
+            fly: { name: "Fly", text: "You can fly." },
+            freecam: { name: "Freecam", text: "You can spiritually project and become like the audience." },
+            high_jump: { name: "HigtJump", text: "high Jump.\nYou can specify the jump height." },
+            inv_walk: { name: "InventoryWalk", text: "You can walk while your inventory is open." },
+            jesus: { name: "Jesus", text: "I can walk on water." },
+            jetpack: { name: "Jetpack", text: "Flying in flight\nadjust speed" },
+            no_clip: { name: "NoClip", text: "You will be able to penetrate blocks." },
+            no_fall: { name: "NoFallDamage", text: "No fall damage." },
+            no_slow: { name: "Noslow", text: "You can run even when you’re hungry." },
+            no_web: { name: "Noweb", text: "Neutralize spider webs" },
+            packet_sneak: { name: "PacketSneak", text: "It looks sneaky to others." },
+            packet_swim: { name: "PackeSwim", text: "It looks like you’re swimming to others." },
+            parkour: { name: "Parkour", text: "A safety feature that automatically puts you in sneak mode when you reach the edge of a block.\n・Automatically disabled in flight mode.\n・Improving safety in construction work" },
+            safe_walk: { name: "SafeWalk", text: "I walk slowly." },
+            speed: { name: "Speed", text: "You can set the movement speed.\nYou can set the speed at which it moves." },
+            spider: { name: "Spider", text: "You can climb walls like a spider.\nYou can set the climbing speed." },
+            step: { name: "Step", text: "Teleport to the top of the wall.\nYou can set the height." }
+        },
+        render_order: ['armor_hud', 'better_nametag', 'cps', 'wallhack', 'change_fov', 'chest_esp', 'chunk_boundaries', 'custom_sky', 'esp', 'fps', 'fullbright', 'hp_indicator', 'hitbox', 'image_display', 'keystrokes', 'level_norm', 'memory_usage', 'nametag', 'no_dynamic_fov', 'no_fire', 'no_fog', 'no_hurtcam', 'no_mc_font', 'no_particle', 'no_rain', 'no_texture', 'no_totem_anim', 'player_camera', 'position', 'shader', 'radar', 'skin_size', 'time_changer', 'true_sight', 'view_distance', 'weather_changer', 'zoom'],
+        render_desc: {
+            armor_hud: { name: "ArmorHUD", text: "The state of the armor is displayed." },
+            better_nametag: { name: "BetterNameTag", text: "It is more accurate than a regular name tag.\nSupport for displaying ItemEntity (dropped items)\nDisplay of item durability\nDisplay of detailed information for Mobs (monsters/animals)\nAdded ItemOverlay functionality" },
+            cps: { name: "CPS", text: "The CPS for ZR and ZL are displayed.\nYou can pin the location you draw.\nYou can specify the background and text colors.\nYou can smooth the contours of your drawing." },
+            wallhack: { name: "Chams", text: "Allows entities to be seen through walls." },
+            change_fov: { name: "ChangeFov", text: "You can change the field of view.\nThe angle can be adjusted." },
+            chest_esp: { name: "ChestESP", text: "It makes chest locations easier to find. ESP is included.\nYou can configure chest settings.\nYou can specify the box, tracer, and color." },
+            chunk_boundaries: { name: "ChunkBounders", text: "Chunk boundaries are displayed." },
+            custom_sky: { name: "CustomSky", text: "You can change the empty state as you like.\nPress and hold a module to see its description\nFull integration of TimeChanger and WeatherChanger\nMore accurate time of day determination (morning, noon, evening, night)" },
+            esp: { name: "ESP", text: "ESP will be displayed.\nYou can specify boxes, tracers, and colors for players, friendly mobs, hostile monsters, and more." },
+            fps: { name: "FPS", text: "FPS will be displayed.\nYou can pin the location you draw.\nYou can specify the background and text colors.\nYou can smooth the contours of your drawing." },
+            fullbright: { name: "FullBright", text: "The screen will become brighter." },
+            hp_indicator: { name: "HPIndicator", text: "Your HP will be displayed." },
+            hitbox: { name: "HitBox", text: "HitBox shows" },
+            image_display: { name: "ImageDisplay", text: "Display custom images as in-game overlays\n\nLoads images from the PinkDiamond/images folder\nSupports image selection\nDisplays as an on-screen overlay\nCompatible with module priority system\nAvailability: Planned for all editions\n" },
+            keystrokes: { name: "KeyStrokes", text: "Show WASD.\nYou can pin the location you draw.\nYou can specify the background and text colors.\nYou can smooth the contours of your drawing." },
+            level_norm: { name: "LevelNorm", text: "All enchantment levels are displayed numerically." },
+            memory_usage: { name: "MemoryUsage", text: "Display Minecraft memory usage in MB." },
+            nametag: { name: "NameTag", text: "The name tag is displayed." },
+            no_dynamic_fov: { name: "NoDynamicFOV", text: "Disables the screen viewing angle when moving." },
+            no_fire: { name: "NoFire", text: "You can disable the fire display." },
+            no_fog: { name: "NoFog", text: "You can disable the fog display." },
+            no_hurtcam: { name: "NoHurtCam", text: "Disable screen shake" },
+            no_mc_font: { name: "NoMCFont", text: "Disable Minecraft fonts" },
+            no_particle: { name: "NoParticle", text: "Disable Particles" },
+            no_rain: { name: "Norain", text: "You can make the weather always sunny." },
+            no_texture: { name: "NoTexture", text: "Disables texture loading" },
+            no_totem_anim: { name: "NoTotemAnim", text: "Disables animations when holding a totem." },
+            player_camera: { name: "PlayerCamera", text: "Added the ability to switch to other players perspectives\nView player perspectives in real time" },
+            position: { name: "Position", text: "The coordinates will be displayed.\nYou can pin the location you draw.\nYou can specify the background and text colors.\nYou can smooth the contours of your drawing." },
+            shader: { name: "Shader", text: "Show shadow.\nYou can specify the color." },
+            radar: { name: "Rader", text: "The locations of nearby players, monsters, animals, etc. are now displayed on screen." },
+            skin_size: { name: "SkinSizeChange", text: "You can resize the skin.\nSize is adjustable." },
+            time_changer: { name: "TimeChanger", text: "A feature that allows you to freely adjust the time within the game world.\n・Features smooth easing function\n・The phases of the moon can be set.\n・Support for integration with CustomSky." },
+            true_sight: { name: "TrueSight", text: "Makes invisible entities (such as players) visible." },
+            view_distance: { name: "ViewDistance", text: "You can change the draw distance." },
+            weather_changer: { name: "WeatherChanger", text: "A feature that allows you to completely control the weather.\n・You can set the weather to sunny, rainy, snowy, or thunderstormy.\n・Smooth weather change easing function\n・Fully integrated with CustomSky" },
+            zoom: { name: "Zoom", text: "You can zoom in and out on distant scenes.\nYou can adjust the distance." }
+        },
+        modmenu_order: ['add_attribute', 'add_enchant', 'add_hideflag', 'add_potion', 'add_unbreakable', 'armor_color', 'cinomenu', 'costreset', 'countryflag_menu', 'custom_menu', 'delet_tag', 'hackitem_menu', 'loot_table', 'mobspawner_edit', 'potion_menu', 'unbreakable_menu', 'villager_edit'],
+        modmenu_desc: {
+            add_attribute: { name: "Add Attribute", text: "Adds special attributes to your held item, allowing you to modify knockback resistance, speed, and attack damage. Multiple attributes can be applied." },
+            add_enchant: { name: "Add Enchantment", text: "Adds enchantments like protection, sharpness, and efficiency to your held item. Multiple enchantments can be applied." },
+            add_hideflag: { name: "Add HideFlags", text: "Hides item flags and tooltip effects on your held item." },
+            add_potion: { name: "Add Potion Effect", text: "Adds potion effects, duration, and amplifier levels to your held potion item. Multiple effects can be applied." },
+            add_unbreakable: { name: "Add Unbreak", text: "Adds the unbreakable tag to your held item." },
+            armor_color: { name: "ArmorColor", text: "Adds colored leather armor and maps to the tools creative inventory tab." },
+            cinomenu: { name: "CinoMenu", text: "Applies the latest powerful mod menu created by the author to the tools creative inventory tab." },
+            costreset: { name: "Cost Reset", text: "Resets the anvil repair cost level of your held item." },
+            countryflag_menu: { name: "CountryFlag", text: "Adds various national flags to the tools creative inventory tab." },
+            villager_edit: { name: "Create Villager Spawner", text: "Allows you to create custom villager trades from scratch, including career and rotation settings. Multiple trades can be configured." },
+            custom_menu: { name: "CustomItemMenu", text: "Adds unique and rare special items to the tools creative inventory tab." },
+            delet_tag: { name: "Deleted Tag", text: "Removes all NBT tags and attributes from your held item." },
+            mobspawner_edit: { name: "Edit Mob Spawner", text: "Allows you to create custom mob spawners." },
+            hackitem_menu: { name: "Hacked Items", text: "Adds popular hacked and modified items to the ingredients creative inventory tab." },
+            loot_table: { name: "Loot Table", text: "Adds chests pre-configured with various loot tables to the ingredients creative inventory tab." },
+            potion_menu: { name: "Potion Menu", text: "Adds a custom potion menu with adjustable effect levels to the ingredients creative inventory tab." },
+            unbreakable_menu: { name: "UnbreakMenu", text: "Applies unbreakable items to the tools creative inventory tab." },
+        },
+        item_order: ['auto_tools', 'chest_steal', 'clear_inventory', 'craft_everything', 'create_item', 'drop_stack', 'fast_craft', 'instant_arming', 'item_copy', 'item_stack', 'rainbow_armor', 'replace_damage', 'replace_id', 'show_item_id', 'sort_inventory', 'swap_offhand'],
+        item_desc: {
+            auto_tools: { name: "AutoTools", text: "You can automatically switch weapons." },
+            chest_steal: { name: "ChestSteal", text: "Take all the contents of the chest" },
+            clear_inventory: { name: "ClearInventory", text: "You can reset your inventory." },
+            craft_everything: { name: "CraftEverything", text: "You can craft anything, anywhere." },
+            create_item: { name: "CreateItem", text: "You can create items.\nFully configurable" },
+            drop_stack: { name: "DropStack", text: "You can discard all of your items at once." },
+            fast_craft: { name: "FastCraft", text: "It can be crafted quickly." },
+            instant_arming: { name: "InstantArming", text: "Items for combat are crafted." },
+            item_copy: { name: "ItemCopy", text: "You can copy items." },
+            item_stack: { name: "ItemStack", text: "You can set the number of items you have on hand." },
+            rainbow_armor: { name: "RainbowArmor", text: "The leather equipment glows with rainbow colors." },
+            replace_damage: { name: "ReplaceDamage", text: "You can change the damage value of items you own." },
+            replace_id: { name: "ReplaceId", text: "You can change the ID of the item you own." },
+            show_item_id: { name: "ShowItemID", text: "The item’s ID is displayed." },
+            sort_inventory: { name: "SortInventory", text: "Automatically categorize and organize items in your inventory." },
+            swap_offhand: { name: "SwapOffHand", text: "You can move the item to the left." }
+        },
+        world_order: ['art_3d', 'anti_command', 'anti_kick', 'fast_nuker', 'harvest_with_ease', 'nbt_edit', 'nuker', 'pixel_art', 'sign_editor', 'world_edit'],
+        world_desc: {
+            art_3d: { name: "3DArt", text: "You can create 3D models." },
+            anti_command: { name: "AntiCommand", text: "All commands are disabled" },
+            anti_kick: { name: "AntiKick", text: "not be expelled" },
+            fast_nuker: { name: "FastNuker", text: "A faster version of Nuker.\nThis can be a cube, a sphere, or an area." },
+            harvest_with_ease: { name: "HarvestWithEase", text: "Crops are automatically harvested and replanted." },
+            nbt_edit: { name: "NBT Edit", text: "You can change the items in detail." },
+            nuker: { name: "Nuker", text: "A simple Nuker that allows you to specify the shape and range.\nThis can be a cube, a sphere, or an area." },
+            pixel_art: { name: "PixelArt", text: "You can create pixel art." },
+            sign_editor: { name: "SignEditor", text: "Click on the sign while crouching to edit it." },
+            world_edit: { name: "WorldEdit", text: "Blocks can be edited\n\nHow to use World Edit\nYou can hold the tool in your left hand.\nThe way the tool is held in the left hand requires adapting the swap off-hand module.\n\nWhen you hold each tool in your left hand, a corresponding frame will appear.\n\nHow to run「D-Pad DOWN & ZL」\nSome tools are applied with or without a block.\n\nYou can adjust the range while holding the tool.\n「D-Pad DOWN & L」increase size\n「D-Pad DOWN & R」reduce size\nThe wider the range, the heavier the processing.\nThere is no size limit, but the chance of crashing is higher.\n\nYou can change the smoothness with some tools.\n「D-Pad LEFT & L」increase size\n「D-Pad LEFT & R」reduce size\nIron pickaxe, gold pickaxe, diamond pickaxe\n「ZR & D-Pad DOWN」You can freely set the range by pressing the button.\n\nYou can stack blocks into a spherical shape using a wooden axe.\n\nYou can use a wooden pickaxe to carve the block into a spherical shape.\n\nYou can use a wooden shovel to chop down blocks.\n\nYou can use a wooden hoe to place blocks on pillars.\nYou can build from the block above to the ground below.\n\nYou can use a stone shovel to raise the blocks.\n\nThe Stone Axe allows you to edit blocks in front of your line of sight.\n・When you hold a block, you can overwrite the block in front of you with that block.\n・When you are not holding anything, you can cut one type of block in front of your eyes.\n\nUse the stone hoe to place blocks centered around your feet.\n\nYou can also use an iron axe to create just the frame.\n\nYou can build walls using an iron pickaxe.\n・Holding a block will create a wall.\n・You can delete it without having anything in it.\n\nThe gold pickaxe allows you to create any circular shape.\n\nYou can use a diamond pickaxe to create a three-dimensional layout.\n\n\nCommentary on other items\nWater and lava can only be removed using a bucket.\nYou can use tall grass to overwrite dirt blocks with grass blocks.\nTorches can be used to efficiently place torches.\n" }
+        },
+        other_order: ['always_score_check', 'audio_player', 'auto_fish', 'log_delet', 'fof_bypass', 'mg_swap_skin', 'message', 'mic_mute', 'mii_changer', 'mini_game_start', 'module_list', 'nnid_changer', 'no_censored', 'public_game', 'to_menu', 'unlock_dlc', 'unlock_home', 'voice_changer', 'vote_increase'],
+        other_desc: {
+            always_score_check: { name: "AlwaysScoreCheck", text: "You can check your performance in the minigame at any time." },
+            audio_player: { name: "AudioPlayer", text: "You can load music by placing MIDI files in [sd:/PinkDiamond/audio/].\n再生モード\n・Normal mode: Play only with piano\n・Extended mode: Play with multiple instruments" },
+            auto_fish: { name: "AutoFish", text: "You can catch fish automatically." },
+            log_delet: { name: "DeletLog", text: "Deletes all logs currently displayed on the screen." },
+            fof_bypass: { name: "FOFBypass", text: "Remove the friend of a friend restriction." },
+            mg_swap_skin: { name: "MGSwapSkin", text: "You can change your skin during the minigame." },
+            message: { name: "Message", text: "It can be kept running on a small screen at all times without having to open the message screen." },
+            mic_mute: { name: "MicMute", text: "The other person cannot hear you." },
+            mii_changer: { name: "MiiChanger", text: "You can change the name of your Mii." },
+            mini_game_start: { name: "MiniGameStart", text: "You can start your own minigame." },
+            module_list: { name: "ModuleList", text: "The available modules will be displayed on the screen." },
+            nnid_changer: { name: "NNIDChanger", text: "You can change the NNID." },
+            no_censored: { name: "NoCensored", text: "Disable censorship." },
+            public_game: { name: "PublicGame", text: "You can enable public in minigames." },
+            to_menu: { name: "ToMenu", text: "Return to the main menu." },
+            unlock_dlc: { name: "UnlockDLC", text: "Unlock additional content." },
+            unlock_home: { name: "UnlockHome", text: "You can also unlock your home button online." },
+            voice_changer: { name: "VoiceChanger", text: "You can change your voice." },
+            vote_increase: { name: "VoteIncrease", text: "In the mini-game, you can specify the number of stages you want to vote for." }
+        },
+        patch_order: ['anti_crash_arrow', 'anti_crash_dispenser', 'anti_crash_fish', 'anti_crash_packet', 'no_custom_skin_patch', 'anti_crash_scull', 'anti_crash_spawner', 'anti_crash_tp', 'anti_crash_with_golem', 'anti_piston_door_bugs', 'fix_craft_packet', 'fix_double_slab', 'fix_splash_potion', 'fix_villager_trades', 'network_protect'],
+        patch_desc: {
+            anti_crash_arrow: { name: "AntiCrashArrow", text: "Fixed an issue where being hit by many tagged arrows would freeze the game." },
+            anti_crash_dispenser: { name: "AntiCrashDispenser", text: "Fixed an issue that caused freezing when using a dispenser." },
+            anti_crash_fish: { name: "AntiCrashFish", text: "Fixed an issue that caused fish items to freeze with non-existent textures." },
+            anti_crash_packet: { name: "AntiCrashPacket", text: "Fixed packet freezing issue." },
+            no_custom_skin_patch: { name: "NoCustomSkin", text: "Fixed a freezing issue caused by an invalid skin." },
+            anti_crash_scull: { name: "AntiCrashScull", text: "Fixed an issue where looking at a non-existent head item would freeze the game." },
+            anti_crash_spawner: { name: "AntiCrashSpawner", text: "Fixed a freezing issue when a non-mob entity was summoned from a spawner." },
+            anti_crash_tp: { name: "AntiCrashTP", text: "Fixed a freezing issue when being teleported to a non-existent fraud." },
+            anti_crash_with_golem: { name: "AntiCrashWithGolem", text: "Fixed an issue where the game would freeze when attempting to summon from certain directions." },
+            anti_piston_door_bugs: { name: "AntiPistonDoorBugs", text: "Solves the problem of piston door freezing." },
+            fix_craft_packet: { name: "FixCraftPacket", text: "Disables illegal craft packets." },
+            fix_double_slab: { name: "FixDoubleSlab", text: "Fixes a freezing issue related to double slab blocks." },
+            fix_splash_potion: { name: "FixSplashPotion", text: "Fixed an issue with using two potions." },
+            fix_villager_trades: { name: "FixVillagerTrades", text: "Fixed a bug in villager trading\nImproved the trading system for greater stability" },
+            network_protect: { name: "NetWorkProtect", text: "Disables cutting skins." }
+        },
+        server_order: ['amplified', 'back_craft', 'back_pack', 'can_kill_creative', 'custom_battle_lobby', 'custom_combo', 'debug_stick', 'disable_break_block', 'disable_craft', 'disable_creative', 'disable_potion', 'double_door', 'egg_damage', 'exploit_snowball', 'fishing_rod_damage', 'free_armor_slot', 'free_offhand', 'infinite_endurance', 'infinite_potion_time', 'mid_game_join', 'nested_shulker', 'no_custom_skin_server', 'player_limit', 'projectiles_break', 'sign_commands', 'sign_editor_plugin', 'sit_plugin', 'snowball_damage', 'tnt_break_disable', 'tumble_fireworks', 'unlock_block_limit', 'unlock_enchant_limit', 'unlock_mod_limit', 'view_miner'],
+        server_desc: {
+            amplified: { name: "Amplified", text: "Amplified terrain can be generated during world generation." },
+            back_craft: { name: "BackCraft", text: "A feature that returns items to their raw materials when they break." },
+            back_pack: { name: "BackPack", text: "Long press on an item to obtain a BackPack item.\nSwing your arm while holding it to open your BackPack." },
+            can_kill_creative: { name: "CanKillCreative", text: "It also does damage in Creative mode." },
+            custom_battle_lobby: { name: "CustomBattleLobby", text: "Custom lobby feature before mini-games begin\n・Host-only features\n・You can freely set the waiting time before the game starts.\n・You can wait in the lobby until enough players have gathered." },
+            custom_combo: { name: "CustomCombo", text: "You can set up combos." },
+            debug_stick: { name: "DebugStick", text: "You can change the damage value of an item using a special stick." },
+            disable_break_block: { name: "DisbleBreakBlock", text: "Disables block breaking." },
+            disable_craft: { name: "DisbleCraft", text: "You can disable crafting." },
+            disable_creative: { name: "DisbleCreative", text: "You will no longer be able to retrieve the item from your creative inventory." },
+            disable_potion: { name: "DisblePotion", text: "Neutralize potions" },
+            double_door: { name: "DoubleDoor", text: "Adjacent doors can be opened and closed simultaneously." },
+            egg_damage: { name: "EggDamage", text: "Hitting an entity with an egg will deal damage" },
+            exploit_snowball: { name: "ExploitSnowBall", text: "Shooting snowballs causes explosions" },
+            fishing_rod_damage: { name: "FishingRodDamage", text: "Passes damage through when an entity is hooked on a fishing rod." },
+            free_armor_slot: { name: "FreeArmorSlot", text: "Removed armor slot limit" },
+            free_offhand: { name: "FreeOffhand", text: "Remove left hand restrictions" },
+            infinite_endurance: { name: "InfiniteEndurance", text: "Infinite durability" },
+            infinite_potion_time: { name: "InfinitePotionTime", text: "Infinite potion time" },
+            mid_game_join: { name: "MidGameJoin", text: "You can join a mini-game even after it has started.\n・Host-only features\n・New players can join even while the game is in progress.\n・Maintaining the existing game balance" },
+            nested_shulker: { name: "NestedShulker", text: "You can place a shulker box inside a shulker box." },
+            no_custom_skin_server: { name: "NoCustomSkin", text: "Error mantle support, freeze skin loading support\nImproved stability when hosting" },
+            player_limit: { name: "PlayerLimit", text: "Limit the number of players in a world" },
+            projectiles_break: { name: "ProjectilesBreak", text: "Any block hit by the projectile is destroyed" },
+            sign_commands: { name: "SignCommands", text: "Signboard command is applied." },
+            sign_editor_plugin: { name: "SignEditorPlugin", text: "Allows all players in your world to use the SignEditor feature." },
+            sit_plugin: { name: "SitPlugin", text: "Look at a stair or half block and swing your arm to sit down." },
+            snowball_damage: { name: "SnowBallDamage", text: "Hitting entities with snowballs will cause damage" },
+            tnt_break_disable: { name: "TNTBreakDisable", text: "When the TNT explodes, it does not destroy the block." },
+            tumble_fireworks: { name: "TumbleFireworks", text: "It can fly sideways like a falling firework." },
+            unlock_block_limit: { name: "UnlockBlockLimit", text: "Removes the limit on the number of blocks that can be placed, such as flags and beacons." },
+            unlock_enchant_limit: { name: "UnlockEnchantLimit", text: "There is no longer a limit to the number of enchantments that can be combined." },
+            unlock_mod_limit: { name: "UnlockModLimit", text: "Removed the mob limit" },
+            view_miner: { name: "ViewMiner", text: "Destroy specific blocks all at once\nA feature that automatically collects destroyed items.\nFull support for enchantments (Luck, Silk Touch, etc.)." }
+        },
+        message_placeholder: "send message"
+    }
+};
+
+function setLang(lang) {
+    currentLang = lang;
+    
+    // サイドバーのラベル更新
+    for (const key in texts[lang].sidebar) {
+        const el = document.getElementById("label-" + key);
+        if (el) el.innerText = texts[lang].sidebar[key];
+    }
+
+    // タブのラベル更新
+    for (const key in texts[lang].tabs) {
+        const el = document.getElementById("tab-" + key);
+        if (el) el.innerText = texts[lang].tabs[key];
+    }
+
+    // その他タブのラベル更新
+    for (const key in texts[lang].seotr) {
+        const el = document.getElementById("label-" + key);
+        if (el) el.innerText = texts[lang].seotr[key];
+    }
+
+    // 使い方・説明の更新
+    document.getElementById("label-usage-text").innerText = texts[lang].usage.text;
+    if (currentModuleKey) showModuleDesc(currentModuleKey);
+
+    // 戦闘モジュールのレンダリング
+    renderModules(currentMenu);
+
+    // フォーラム用翻訳
+    document.getElementById("forum-tab-main").innerText = texts[lang].forum.main;
+    document.getElementById("forum-tab-topic").innerText = texts[lang].forum.topic;
+    document.getElementById("forum-tab-article").innerText = texts[lang].forum.article;
+    document.getElementById("forum-tab-latest").innerText = texts[lang].forum.latest;
+    document.getElementById("forum-title-placeholder").placeholder = texts[lang].forum.title;
+    document.getElementById("forum-msg-placeholder").placeholder = texts[lang].forum.msg;
+    document.getElementById("message-placeholder").placeholder = texts[lang].message_placeholder;
+
+    updateTitle();
+    document.getElementById("subtitle").innerText = texts[lang].subtitle;
+
+    document.getElementById("btn-ja").classList.remove("active");
+    document.getElementById("btn-en").classList.remove("active");
+    document.getElementById("btn-" + lang).classList.add("active");
+}
+
+/* ===== タブ ===== */
+function showTab(e, name) {
+    document.querySelectorAll(".tabContent").forEach(el => el.style.display = "none");
+    document.getElementById(name).style.display = "block";
+
+    document.querySelectorAll(".tab").forEach(el => el.classList.remove("active"));
+    e.target.classList.add("active");
+}
+
+/* ===== メニュー ===== */
+function selectMenu(btn, key) {
+    currentMenu = key;
+    document.querySelectorAll(".menu-btn").forEach(el => el.classList.remove("active"));
+    btn.classList.add("active");
+    updateTitle();
+
+    // コンテンツの切り替え
+    document.querySelectorAll(".menu-content").forEach(el => el.style.display = "none");
+    const subtitle = document.getElementById("subtitle");
+    const descPanel = document.getElementById("module-desc");
+
+    if (key === 'player') {
+        document.getElementById("content-player").style.display = "block";
+        subtitle.style.display = "none";
+        descPanel.style.display = "none";
+    } else if (key === 'message') {
+        document.getElementById("content-message").style.display = "block";
+        subtitle.style.display = "none";
+        descPanel.style.display = "none";
+    } else if (['combat', 'movement', 'render', 'modmenu', 'item', 'world', 'other', 'patch', 'server'].includes(key)) {
+        document.getElementById("content-modules").style.display = "block";
+        renderModules(key);
+        subtitle.style.display = "none";
+        descPanel.style.display = "block";
+    } else {
+        document.getElementById("content-settings").style.display = "block";
+        subtitle.style.display = "block";
+        descPanel.style.display = "none";
+    }
+}
+
+function renderModules(menuKey) {
+    const grid = document.getElementById("module-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    const order = texts[currentLang][menuKey + "_order"];
+    const desc = texts[currentLang][menuKey + "_desc"];
+    if (!order || !desc) return;
+
+    const itemsPerCol = Math.ceil(order.length / 4);
+    for (let i = 0; i < 4; i++) {
+        const col = document.createElement("div");
+        col.className = "combat-column";
+        const chunk = order.slice(i * itemsPerCol, (i + 1) * itemsPerCol);
+        chunk.forEach(key => {
+            const module = desc[key] || { name: key };
+            const card = document.createElement("div");
+            card.className = "combat-card";
+            card.innerHTML = `<button class="combat-btn" onclick="showModuleDesc('${key}')">${module.name}</button>`;
+            col.appendChild(card);
+        });
+        grid.appendChild(col);
+    }
+}
+
+function showModuleDesc(moduleKey) {
+    currentModuleKey = moduleKey;
+    const info = texts[currentLang][currentMenu + "_desc"][moduleKey] || { name: moduleKey, text: "No description available." };
+    document.getElementById("desc-title").innerText = info.name;
+    document.getElementById("desc-body").innerText = info.text;
+}
+
+function updateTitle() {
+    document.getElementById("title").innerText = texts[currentLang].sidebar[currentMenu];
+}
+
+/* ===== トグルスイッチ ===== */
+function toggleSwitch(el) {
+    el.classList.toggle("active");
+}
+
+function updateSlider(slider) {
+    const value = slider.value;
+    const label = document.getElementById("sliderValue");
+    label.innerText = value;
+    label.style.left = (value * 100) + "%";
+}
+
+function toggleBaseTheme() {
+    const el = document.getElementById("baseTheme");
+    const isDark = el.innerText === "Dark";
+    const newTheme = isDark ? "White" : "Dark";
+    el.innerText = newTheme;
+    
+    if (newTheme === "White") {
+        document.body.classList.add("white-theme");
+    } else {
+        document.body.classList.remove("white-theme");
+    }
+}
+
+const accentColors = ["Gray", "Blue", "Green", "Purple", "Orange", "Red", "Yellow", "Cyan", "Rainbow", "Custom"];
+let currentAccentIndex = 0;
+
+function cycleAccentColor() {
+    currentAccentIndex = (currentAccentIndex + 1) % accentColors.length;
+    const color = accentColors[currentAccentIndex];
+    document.getElementById("accentColor").innerText = color;
+    
+    // 既存のアクセントクラスをすべて削除
+    document.body.classList.remove(...accentColors.map(c => "accent-" + c.toLowerCase()));
+    // 新しいクラスを追加 (Custom以外)
+    if (color !== "Custom") {
+        document.body.classList.add("accent-" + color.toLowerCase());
+    }
+}
+
+/* 初期状態 */
+setLang("ja");
+</script>
+
+</body>
+</html>
