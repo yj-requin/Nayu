@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>クライアント詳細ガイド</title>
+  <style>
+    :root {
+      --bg: #f4f8fc;
+      --card: #ffffff;
+      --text: #203044;
+      --muted: #68788b;
+      --accent: #2d8bd8;
+      --accent-soft: #e8f4ff;
+      --border: #e4edf5;
+      --shadow: 0 8px 24px rgba(37, 72, 105, .07);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans JP", sans-serif;
+      line-height: 1.7;
+    }
+    .page {
+      width: min(900px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 54px 0 72px;
+    }
+    header { margin-bottom: 30px; }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      line-height: 1.25;
+      letter-spacing: -.03em;
+    }
+    .intro {
+      max-width: 620px;
+      margin: 14px 0 0;
+      color: var(--muted);
+    }
+    .link-list {
+      display: grid;
+      gap: 16px;
+    }
+    .link-card {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 24px;
+      align-items: center;
+      padding: 18px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .link-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(37, 72, 105, .12);
+    }
+    .link-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border-radius: 12px;
+      background: var(--accent-soft);
+    }
+    .card-content { min-width: 0; }
+    .tag {
+      display: inline-block;
+      margin-bottom: 7px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #2477b9;
+      font-size: .76rem;
+      font-weight: 700;
+    }
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      line-height: 1.4;
+    }
+    .description {
+      margin: 9px 0 15px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .open-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 15px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-size: .9rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .18s ease;
+    }
+    .open-link:hover { background: #176fb9; }
+    .open-link span { font-size: 1.05rem; }
+    footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: .82rem;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .page { width: min(100% - 24px, 520px); padding-top: 32px; }
+      .link-card {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 14px;
+      }
+      .link-card img { aspect-ratio: 16 / 9; }
+      h2 { font-size: 1.15rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Client Guide</p>
+      <h1>クライアントリンクガイド</h1>
+      <p class="intro">使用している目的のわからないクライアントの中身のチートを確認することができます。</p>
+    </header>
+
+    <section class="link-list" aria-label="リンク一覧">
+      <!-- カードを複製して追加できます。画像は images フォルダーに入れて、src を変更してください。 -->
+      <article class="link-card">
+        <img src="./Icon/CinoClientIco.png" alt="CinoClient">
+        <div class="card-content">
+          <span class="tag">Client</span>
+          <h2>CinoClient</h2>
+          <p class="description">
+            他のクライアントより軽量化でオリジナル<br>
+            UIに凝っており、アイテムに関するクライアントでは最強である。<br>
+            戦闘系はそんなに入っておらず、RPGやワールドの手助けなどに向いてます。<br></p>
+          <a class="open-link" href="./CinoClient/" target="_blank" rel="noopener noreferrer">サイトを開く <span>↗</span></a>
+        </div>
+      </article>
+
+      <article class="link-card">
+        <img src="./Icon/CinoClientIco.png" alt="CinopLus">
+        <div class="card-content">
+          <span class="tag">Client</span>
+          <h2>CinopLus</h2>
+          <p class="description">
+            PinkDiamondの拡張版です。<br>
+            RPG制作に向いてます。<br>
+          </p>
+          <a class="open-link" href="./CinopLus/" target="_blank" rel="noopener noreferrer">サイトを開く <span>↗</span></a>
+        </div>
+      </article>
+
+      <article class="link-card">
+        <img src="./Icon/LameClientIco.png" alt="LameClient">
+        <div class="card-content">
+          <span class="tag">Client</span>
+          <h2>LameClient</h2>
+          <p class="description">
+            フリー版がリリースされました。<br>
+            ※わからないモジュールは詳細書いてません<br>
+          </p>
+          <a class="open-link" href="./LameClient/" target="_blank" rel="noopener noreferrer">サイトを開く <span>↗</span></a>
+        </div>
+      </article>
+
+      <article class="link-card">
+        <img src="./Icon/PinkDiamondIco.png" alt="PinkDiamond">
+        <div class="card-content">
+          <span class="tag">Client</span>
+          <h2>PinkDiamond</h2>
+          <p class="description">
+            オープンソースでPinkDiamondがリリースされました。<br>
+            元のPinkDiamondの状態で公開しております。<br>
+            サイトはパソコン版と全バージョン対応のものを公開しています。<br>
+          </p>
+          <a class="open-link" href="./PinkDiamond/" target="_blank" rel="noopener noreferrer">サイトを開く <span>↗</span></a>
+        </div>
+      </article>
+
+      <!-- <article class="link-card">
+        <img src="./Icon/LancelotIco.png" alt="Lancelot">
+        <div class="card-content">
+          <span class="tag">Client</span>
+          <h2>Lancelot</h2>
+          <p class="description">
+            リリースしていません。<br>
+            ※製作者と連絡が取れないので情報だけ公開します。<br>
+          </p>
+          <a class="open-link" href="./Lancelot/" target="_blank" rel="noopener noreferrer">サイトを開く <span>↗</span></a>
+        </div>
+      </article> -->
+
+
+    </section>
+
+  </main>
+</body>
+</html>
